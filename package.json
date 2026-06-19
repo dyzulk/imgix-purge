@@ -1,15 +1,34 @@
 {
   "name": "imgix-purge",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A CLI tool to bulk purge all assets in an imgix Source cache.",
+  "main": "src/purge.ts",
   "scripts": {
     "imgix-purge": "tsx src/purge.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "types:check": "tsc --noEmit"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "imgix",
+    "purge",
+    "cache",
+    "cdn",
+    "bulk-purge",
+    "cloudflare-r2"
+  ],
+  "author": "dyzulk",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dyzulk/imgix-purge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dyzulk/imgix-purge/issues"
+  },
+  "homepage": "https://github.com/dyzulk/imgix-purge#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "packageManager": "pnpm@11.5.3",
   "devEngines": {
     "packageManager": {
