@@ -45,9 +45,10 @@
   "packageManager": "pnpm@11.5.3",
   "type": "module",
   "dependencies": {
-    "@inquirer/prompts": "^8.5.2",
+    "@clack/prompts": "^1.5.1",
     "commander": "^15.0.0",
-    "imgix-purge": "link:"
+    "imgix-purge": "link:",
+    "picocolors": "^1.1.1"
   },
   "devDependencies": {
     "@types/node": "^25.9.3",
