@@ -21,6 +21,7 @@ export const ui = {
   select: p.select,
   password: p.password,
   spinner: p.spinner,
+  note: p.note,
   isCancel: p.isCancel,
   cancel: (msg: string = 'Operation cancelled.') => {
     p.cancel(pc.yellow(msg));

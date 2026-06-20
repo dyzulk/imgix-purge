@@ -3,6 +3,7 @@ import { getGlobalAuth } from './auth.js';
 export interface Config {
   apiKey: string;
   sourceId: string;
+  secureToken: string;
   domains: string[];
   batchSize: number;
   execute: boolean;
@@ -12,6 +13,7 @@ export interface Config {
 const globalAuth = getGlobalAuth();
 const apiKey = process.env.IMGIX_API_KEY || globalAuth?.apiKey || '';
 const sourceId = process.env.IMGIX_SOURCE_ID || globalAuth?.sourceId || '';
+const secureToken = process.env.IMGIX_SECURE_TOKEN || globalAuth?.secureToken || '';
 
 const args = process.argv.slice(2);
 const dryRun = args.includes('--dry-run') || args.includes('-d');
@@ -33,6 +35,7 @@ const domains = cliDomains.length > 0 ? cliDomains : envDomains;
 export const config: Config = {
   apiKey,
   sourceId,
+  secureToken,
   domains,
   batchSize: 10000,
   execute,

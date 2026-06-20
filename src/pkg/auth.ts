@@ -7,6 +7,7 @@ const AUTH_FILE_PATH = path.join(os.homedir(), '.imgix-auth.json');
 export interface AuthConfig {
   apiKey: string;
   sourceId: string;
+  secureToken?: string;
 }
 
 export function getGlobalAuth(): AuthConfig | null {
