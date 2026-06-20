@@ -12,6 +12,8 @@ program
     sortSubcommands: true,
   })
   .addHelpCommand(false)
+  .option('-d, --dry-run', 'Run in simulation mode (list assets that would be purged without calling the Purge API)')
+  .option('--domain <dom>', 'Specify target domain(s) manually (comma-separated)')
   .option('--api-key <key>', 'Your imgix Management API Key (overrides IMGIX_API_KEY env)')
   .option('--source-id <id>', 'Your imgix Source ID (overrides IMGIX_SOURCE_ID env)')
   .version('1.0.0', '-V, --version', 'Output the version number')
@@ -29,19 +31,17 @@ Environment Variables:
 program
   .command('purge')
   .description('Purge all assets in the imgix Source')
-  .option('-d, --dry-run', 'Run in simulation mode (list assets that would be purged without calling the Purge API)')
-  .option('--domain <dom>', 'Specify target domain(s) manually (comma-separated)')
   .allowUnknownOption(true)
-  .action(async (options) => {
+  .action(async () => {
     const globalOpts = program.opts();
     
-    // Override config with CLI flags if provided (from global or subcommand options)
+    // Override config with CLI flags if provided (from global options)
     if (globalOpts.apiKey) config.apiKey = globalOpts.apiKey;
     if (globalOpts.sourceId) config.sourceId = globalOpts.sourceId;
-    if (options.dryRun) config.dryRun = options.dryRun;
+    if (globalOpts.dryRun) config.dryRun = globalOpts.dryRun;
     
-    // Domain comes from subcommand
-    if (options.domain) config.domains = options.domain.split(',').map((d: string) => d.trim());
+    // Domain comes from global options
+    if (globalOpts.domain) config.domains = globalOpts.domain.split(',').map((d: string) => d.trim());
     
     await runPurge();
   });
