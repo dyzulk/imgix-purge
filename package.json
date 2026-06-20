@@ -14,7 +14,7 @@
     "build": "tsup",
     "prepublishOnly": "pnpm build",
     "imgix": "node bin/imgix.js",
-    "dev": "tsx src/index.ts",
+    "dev": "tsx src/bin/imgix.ts",
     "test:e2e": "node --import tsx --test e2e/*.test.ts",
     "types:check": "tsc --noEmit",
     "link:local": "npm link --ignore-engines",

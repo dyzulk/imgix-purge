@@ -39,14 +39,12 @@ export const config: Config = {
   dryRun,
 };
 
-
 export function validateConfig(): void {
   if (!config.apiKey || !config.sourceId) {
     console.error('Error: Missing API Key or Source ID.');
-    console.error('Please configure them globally by running: "imgix-purge auth setup"');
+    console.error('Please configure them globally by running: "imgix auth setup"');
     console.error('Or provide them via --api-key and --source-id flags / environment variables.');
-    console.error('Run "imgix-purge --help" for more details.');
+    console.error('Run "imgix --help" for more details.');
     process.exit(1);
   }
 }
-

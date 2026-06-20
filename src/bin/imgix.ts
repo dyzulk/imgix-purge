@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { runPurge } from './cmd/index.js';
-import { runAuthSetup, runAuthStatus, runAuthClear } from './cmd/auth.js';
-import { config } from './config.js';
+import { runPurge } from '../cmd/index.js';
+import { runAuthSetup, runAuthStatus, runAuthClear } from '../cmd/auth.js';
+import { config } from '../pkg/config.js';
 
 const program = new Command();
 

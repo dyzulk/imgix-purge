@@ -1,6 +1,6 @@
 import * as p from '@clack/prompts';
 import pc from 'picocolors';
-import { getGlobalAuth, setGlobalAuth, clearGlobalAuth } from '../auth.js';
+import { getGlobalAuth, setGlobalAuth, clearGlobalAuth } from '../pkg/auth.js';
 
 export async function runAuthSetup() {
   p.intro(pc.bgCyan(pc.black(' imgix-purge Authentication Setup ')));

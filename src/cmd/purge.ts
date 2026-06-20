@@ -1,6 +1,6 @@
-import { config, validateConfig } from '../config.js';
-import { delay, normalizePath } from '../utils.js';
-import { fetchSourceDomains, fetchAssetsPage, submitPurgeRequest } from '../api.js';
+import { config, validateConfig } from '../pkg/config.js';
+import { delay, normalizePath } from '../internal/utils/helper.js';
+import { fetchSourceDomains, fetchAssetsPage, submitPurgeRequest } from '../pkg/api.js';
 
 export async function runPurge() {
   console.log('--- imgix Bulk Purge Tool ---');
