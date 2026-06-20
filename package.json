@@ -15,6 +15,7 @@
     "prepublishOnly": "pnpm build",
     "imgix-purge": "node bin/imgix-purge.js",
     "dev": "tsx src/index.ts",
+    "test:e2e": "node --import tsx --test e2e/*.test.ts",
     "types:check": "tsc --noEmit"
   },
   "keywords": [

@@ -6,7 +6,7 @@ This plan outlines the steps to populate all standard metadata fields in `packag
 
 ### package.json Configuration
 
-#### [MODIFY] [package.json](file:///c:/Users/dyzulk/Documents/dyzulk/imgix-purge/package.json)
+#### [MODIFY] [package.json](../../package.json)
 - Populate all standard registry metadata fields:
   - `"description"`: `"A CLI tool to bulk purge all assets in an imgix Source cache."`
   - `"keywords"`: `["imgix", "purge", "cache", "cdn", "bulk-purge", "cloudflare-r2"]`
