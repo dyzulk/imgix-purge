@@ -7,6 +7,13 @@ import path from 'node:path';
 const execAsync = promisify(exec);
 
 describe('imgix-purge e2e', () => {
+  it('should print help text when invoked with no arguments', async () => {
+    const { stdout, stderr } = await execAsync(`node ./bin/imgix-purge.js`);
+    assert.match(stdout, /Usage: imgix-purge/);
+    assert.match(stdout, /A CLI tool to bulk purge all assets/);
+    assert.equal(stderr, '');
+  });
+
   it('should print help text when --help is passed', async () => {
     const { stdout, stderr } = await execAsync(`node ./bin/imgix-purge.js --help`);
     
@@ -25,7 +32,7 @@ describe('imgix-purge e2e', () => {
   it('should fail cleanly if API key or source ID is missing', async () => {
     try {
       // Pass an empty environment to ensure no env variables leak in
-      await execAsync(`node ./bin/imgix-purge.js`, { env: {} });
+      await execAsync(`node ./bin/imgix-purge.js purge`, { env: {} });
       assert.fail('Should have failed');
     } catch (error: any) {
       assert.match(error.stderr || error.stdout, /Error: Missing API Key or Source ID/);

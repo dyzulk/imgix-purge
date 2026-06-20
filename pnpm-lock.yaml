@@ -203,6 +203,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  imgix-purge: 'link:'
+
 importers:
 
   .:
@@ -210,6 +213,9 @@ importers:
       commander:
         specifier: ^15.0.0
         version: 15.0.0
+      imgix-purge:
+        specifier: 'link:'
+        version: 'link:'
     devDependencies:
       '@types/node':
         specifier: ^25.9.3

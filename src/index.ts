@@ -10,9 +10,9 @@ program
   .description('A CLI tool to bulk purge all assets in an imgix Source cache.')
   .version('1.0.0');
 
-// Register the main/default command
+// Register the purge command
 program
-  .command('purge', { isDefault: true })
+  .command('purge')
   .description('Purge all assets in the imgix Source')
   .option('-d, --dry-run', 'Run in simulation mode (list assets that would be purged without calling the Purge API)')
   .option('--domain <dom>', 'Specify target domain(s) manually (comma-separated)')
@@ -33,5 +33,10 @@ program
     
     await runPurge();
   });
+
+if (!process.argv.slice(2).length) {
+  program.outputHelp();
+  process.exit(0);
+}
 
 program.parse(process.argv);
