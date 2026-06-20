@@ -38,6 +38,9 @@ We will relocate source files to the modular layout:
 #### [NEW] [src/internal/utils/helper.ts](../../../src/internal/utils/helper.ts)
 - Relocate from `src/utils.ts`. Provides delay and normalization helpers.
 
+#### [NEW] [src/internal/ui/prompts.ts](../../../src/internal/ui/prompts.ts)
+- Create custom UI prompts utility module wrapping `@clack/prompts` to ensure consistent terminal visualization.
+
 #### [DELETE] Old Files in `src/` Root
 - Delete `src/index.ts`, `src/config.ts`, `src/auth.ts`, `src/api.ts`, and `src/utils.ts` after they are successfully relocated.
 
@@ -91,21 +94,23 @@ imgix-cli-unofficial/
 │   ├── bin/                   # Entry point utama parser CLI (Commander)
 │   │   └── imgix.ts
 │   ├── pkg/                   # SDK / Modul inti yang independen & reusable
-│   │   ├── api.ts             # Manajemen pemanggilan REST API imgix
-│   │   ├── auth.ts            # Manajemen penyimpanan berkas kredensial global (~/.imgix-auth.json)
-│   │   └── config.ts          # Parser parameter & prioritas konfigurasi (CLI > ENV > Global Auth)
-│   ├── internal/              # Komponen khusus internal CLI
+│   │   ├── api.ts             # REST API requests wrapper for imgix
+│   │   ├── auth.ts            # Global credentials storage file manager (~/.imgix-auth.json)
+│   │   └── config.ts          # Parameter parser & configuration resolution (CLI > ENV > Global Auth)
+│   ├── internal/              # Internal helper components
+│   │   ├── ui/
+│   │   │   └── prompts.ts     # Wrapper @clack/prompts for UI consistency
 │   │   └── utils/
-│   │       └── helper.ts      # Pembantu pembatasan laju (delay) dan format teks
-│   └── cmd/                   # Implementasi sub-perintah
-│       ├── auth.ts            # Manajemen autentikasi (setup, status, clear)
-│       ├── purge.ts           # Logika pembersihan cache (purge --all)
-│       ├── source.ts          # Integrasi daftar dan info Source
-│       ├── assets.ts          # Eksplorasi & inspeksi file gambar
-│       ├── url.ts             # Fungsi penandatanganan & optimasi kueri
-│       ├── diagnose.ts        # Utilitas cek header CDN
-│       └── usage.ts           # Statistik penggunaan & kuota
-├── package.json               # Konfigurasi dependensi (tsup, @clack/prompts, picocolors)
+│   │       └── helper.ts      # Rate limit (delay) and text formatting utilities
+│   └── cmd/                   # Subcommands implementation modules
+│       ├── auth.ts            # Authentication manager (setup, status, clear)
+│       ├── purge.ts           # Cache purge logic handler (purge --all)
+│       ├── source.ts          # Source query and information integration
+│       ├── assets.ts          # Image assets list explorer & inspector
+│       ├── url.ts             # URL signing & query parameter optimization
+│       ├── diagnose.ts        # CDN cache header diagnostics utility
+│       └── usage.ts           # Usage metrics & quota dashboard
+├── package.json               # Dependency configuration (tsup, @clack/prompts, picocolors)
 ├── tsconfig.json              # TypeScript compiler options
 └── tsup.config.ts             # Bundler build config file for dist/
 ```

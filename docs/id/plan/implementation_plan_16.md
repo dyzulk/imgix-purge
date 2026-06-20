@@ -38,6 +38,9 @@ Kita akan memindahkan berkas sumber ke tata letak modular:
 #### [NEW] [src/internal/utils/helper.ts](../../../src/internal/utils/helper.ts)
 - Pindahkan dari `src/utils.ts`. Menyediakan utilitas delay dan normalisasi.
 
+#### [NEW] [src/internal/ui/prompts.ts](../../../src/internal/ui/prompts.ts)
+- Buat modul pembantu visual UI kustom untuk membungkus `@clack/prompts` agar visualisasi status dan elemen visual terminal konsisten.
+
 #### [DELETE] Berkas Lama di Root `src/`
 - Hapus berkas `src/index.ts`, `src/config.ts`, `src/auth.ts`, `src/api.ts`, dan `src/utils.ts` setelah dipindahkan.
 
@@ -95,6 +98,8 @@ imgix-cli-unofficial/
 │   │   ├── auth.ts            # Manajemen penyimpanan berkas kredensial global (~/.imgix-auth.json)
 │   │   └── config.ts          # Parser parameter & prioritas konfigurasi (CLI > ENV > Global Auth)
 │   ├── internal/              # Komponen khusus internal CLI
+│   │   ├── ui/
+│   │   │   └── prompts.ts     # Wrapper @clack/prompts untuk konsistensi UI
 │   │   └── utils/
 │   │       └── helper.ts      # Pembantu pembatasan laju (delay) dan format teks
 │   └── cmd/                   # Implementasi sub-perintah
