@@ -6,8 +6,6 @@ const AUTH_FILE_PATH = path.join(os.homedir(), '.imgix-auth.json');
 
 export interface AuthConfig {
   apiKey: string;
-  sourceId: string;
-  secureToken?: string;
 }
 
 export function getGlobalAuth(): AuthConfig | null {
@@ -15,7 +13,7 @@ export function getGlobalAuth(): AuthConfig | null {
     if (fs.existsSync(AUTH_FILE_PATH)) {
       const data = fs.readFileSync(AUTH_FILE_PATH, 'utf-8');
       const parsed = JSON.parse(data);
-      if (parsed.apiKey && parsed.sourceId) {
+      if (parsed.apiKey) {
         return parsed as AuthConfig;
       }
     }

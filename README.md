@@ -58,6 +58,17 @@ The wizard will prompt you to enter:
 
 Credentials are saved locally under `~/.imgix-auth.json` with secure owner-only permissions.
 
+### Required API Key Scopes
+
+For full functionality across all commands, your API key must be configured with the following permissions/scopes in your imgix dashboard:
+- `Purge`: Required to clear asset caches.
+- `Asset Manager Browse`: Required to query and inspect asset metadata.
+- `Sources` (Read): Required to automatically resolve deployment domains.
+- `Billing` (Read): Required to retrieve usage reports.
+
+> [!TIP]
+> Alternatively, you can use a master API Key with the "Account Admin" scope (which includes all permissions) to ensure seamless access to all commands without configuring individual permissions.
+
 To check your authentication status:
 
 ```bash
