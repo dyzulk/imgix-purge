@@ -88,3 +88,69 @@ export async function submitPurgeRequest(apiKey: string, urlToPurge: string): Pr
     return false;
   }
 }
+
+export interface SourceListResponse {
+  data: Array<{
+    id: string;
+    type: string;
+    attributes: {
+      name: string;
+      enabled: boolean;
+      deployment: {
+        type: string;
+        imgix_subdomains?: string[];
+        custom_domains?: string[];
+        [key: string]: any;
+      };
+    };
+  }>;
+}
+
+export interface SourceDetailResponse {
+  data: {
+    id: string;
+    type: string;
+    attributes: {
+      name: string;
+      enabled: boolean;
+      deployment: {
+        type: string;
+        imgix_subdomains?: string[];
+        custom_domains?: string[];
+        [key: string]: any;
+      };
+    };
+  };
+}
+
+export async function fetchSources(apiKey: string): Promise<SourceListResponse> {
+  const response = await fetch(`${API_BASE}/sources`, {
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Accept': 'application/vnd.api+json',
+    },
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Failed to fetch sources (HTTP ${response.status}): ${text}`);
+  }
+
+  return (await response.json()) as SourceListResponse;
+}
+
+export async function fetchSourceDetail(apiKey: string, sourceId: string): Promise<SourceDetailResponse> {
+  const response = await fetch(`${API_BASE}/sources/${sourceId}`, {
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Accept': 'application/vnd.api+json',
+    },
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Failed to fetch source details (HTTP ${response.status}): ${text}`);
+  }
+
+  return (await response.json()) as SourceDetailResponse;
+}
