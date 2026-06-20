@@ -93,156 +93,125 @@ The CLI features a hybrid interface supporting both **command arguments** for au
 
 ---
 
-### Global Options
+<details>
+<summary><b>Global Options</b> (Click to expand)</summary>
 
 These options apply across all commands or tune execution behavior:
 
-* `-d, --dry-run`
-  * **Description**: Runs commands (especially `purge`) in simulation mode.
-  * **Behavior**: Displays the URLs that would be targeted, but does not execute the actual network mutation requests (e.g. it prints the purge candidates without making the purge API calls).
-* `--batch-size <num>` (Default: `10000`)
-  * **Description**: Sets the maximum size of asset pages retrieved per request when listing or batch processing assets.
-* `-V, --version`
-  * **Description**: Outputs the version number of the installed CLI (`1.0.0`).
-* `-h, --help`
-  * **Description**: Displays the command-line help interface and lists all available commands or command-specific flags.
+| Option / Flag | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `-d, --dry-run` | Boolean | `false` | Runs commands (especially `purge`) in simulation mode. Lists targeted URLs without sending API mutations. |
+| `--batch-size <num>` | Integer | `10000` | Sets the page size limit when retrieving assets from the API. |
+| `-V, --version` | None | - | Outputs the version number of the installed CLI (`1.0.0`). |
+| `-h, --help` | None | - | Displays the CLI help guide and lists all commands or specific flags. |
 
----
+</details>
 
-### Commands & Subcommands
-
-#### `auth` — Credential Management
+<details>
+<summary><b>Credential Management (auth)</b> (Click to expand)</summary>
 
 Configure and verify global credentials used to access the imgix Management API.
 
-##### `imgix auth setup`
-* **Description**: Runs an interactive configuration wizard.
-* **Flow**: Prompts you for your **imgix Management API Key** (starts with `ak_`).
-* **Storage**: Encrypts and saves your credentials locally in `~/.imgix-auth.json` with secure, owner-only file permissions (read/write only by your system user).
-* **On-the-fly Trigger**: If you execute any command requiring authentication without having set up credentials, this setup wizard will trigger automatically.
+| Subcommand | Arguments | Options / Flags | Description | Interactive Behavior | Example Usage |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `setup` | None | None | Securely stores your API Key globally. | Prompts for API Key (`ak_...`). Saves to `~/.imgix-auth.json`. | `imgix auth setup` |
+| `status` | None | None | Validates current credentials. | Checks key validity and displays active API scopes (e.g. `Purge`, `Billing`). | `imgix auth status` |
+| `clear` | None | None | Logs out of your account. | Deletes local configuration file `~/.imgix-auth.json` immediately. | `imgix auth clear` |
 
-##### `imgix auth status`
-* **Description**: Validates your current credentials against the imgix Management API.
-* **Output**: Displays the status of your connection and the scopes granted to your API Key (e.g. `Purge`, `Asset Manager Browse`, `Sources`, `Billing`).
+</details>
 
-##### `imgix auth clear` (Alias: `logout`)
-* **Description**: Logs out of your account.
-* **Behavior**: Permanently deletes the local configuration file `~/.imgix-auth.json`.
-
----
-
-#### `purge` — Cache Clearing
+<details>
+<summary><b>Cache Clearing (purge)</b> (Click to expand)</summary>
 
 Clear cached files on the imgix CDN edge servers.
 
-##### `imgix purge [options]`
-* **Arguments**: None (completely interactive flow).
-* **Execution Flow**:
-  1. **Select Source(s)**: Displays a multi-select checklist of all active imgix Sources. You can select one or multiple sources.
-  2. **Select Purge Mode**:
-     * **Bulk Purge**: Crawls through the entire asset registry of the selected Source(s), resolves all domains associated with those Sources, and purges every asset. Safe rate-limiting (3 requests per second) is enforced to prevent API throttling. *(Note: Bulk Purge is not supported on manually configured Source domains)*.
-     * **Selective Purge**: Prompts you to input one or more relative file paths separated by commas (e.g., `/images/avatar.jpg, /logo.svg`).
-  3. **Confirmation**: Prompts you to confirm execution before submitting the requests.
-* **Flags Supported**: Supports the global `-d, --dry-run` flag to list resolved URLs without sending actual purge requests.
+| Command | Arguments | Options / Flags | Description | Interactive Behavior | Example Usage |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `purge` | None | `-d, --dry-run`<br>`--batch-size <num>` | Clears cache for selected Sources. | 1. Prompts to choose Source(s) (multi-select checklist).<br>2. Prompts to choose mode (**Bulk** or **Selective**). If Selective, prompts for comma-separated paths.<br>3. Prompts for final execution confirmation. | `imgix purge` |
 
----
+#### Detailed Modes:
+* **Bulk Purge**: Crawls the entire asset registry of the Source, resolves all associated domains, and purges all assets. Enforces a rate-limit safe delay of 350ms between requests (3 requests per second) to prevent API rate-limit errors. Not supported on manually configured Source domains.
+* **Selective Purge**: Prompts for a list of paths (e.g., `/images/logo.png, icon.svg`). Normalizes paths and purges only those specified assets across the Source domains.
 
-#### `source` — Source Configuration Management
+</details>
 
-List and inspect the configurations of your imgix Sources.
+<details>
+<summary><b>Source Config Management (source)</b> (Click to expand)</summary>
 
-##### `imgix source list`
-* **Description**: Contacts the Management API and lists all configured Sources under your account.
-* **Output**: Displays a table showing the Source Name, Source ID, Source Type (e.g., Amazon S3, Web Folder, Cloudflare R2), and all associated custom deployment domains.
+List and inspect configurations of your imgix Sources.
 
-##### `imgix source info [source-id]`
-* **Arguments**:
-  * `[source-id]` (Optional): The unique ID of the imgix Source you want to inspect.
-* **Behavior**: If the `[source-id]` argument is omitted, the CLI displays an interactive dropdown list for you to select a Source.
-* **Output**: Displays the raw, detailed configuration JSON of the Source directly in the terminal (useful for checking secure tokens, path prefixes, and storage credentials).
+| Subcommand | Arguments | Options / Flags | Description | Interactive Behavior | Example Usage |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `list` | None | None | Lists all active Sources in the account. | Displays Name, ID, Type (e.g. S3, R2, Web Folder), and domains. | `imgix source list` |
+| `info` | `[source-id]` *(Optional)* | None | Retrieves detailed config JSON of a Source. | If `[source-id]` is omitted, prompts you to select one from an interactive dropdown. | `imgix source info` |
 
----
+</details>
 
-#### `assets` — Asset Directory Exploration
+<details>
+<summary><b>Asset Exploration (assets)</b> (Click to expand)</summary>
 
 Search and inspect files stored or registered in your imgix Sources.
 
-##### `imgix assets list`
-* **Options**:
-  * `--cursor <cursor>` (Optional): The pagination token for the next page of results.
-* **Behavior**: Retrieves a list of up to 50 assets registered in your active Source.
-* **Output**: Lists the relative origin paths of your assets and prints the cursor token for the next page. If there is a next page, run:
-  ```bash
-  imgix assets list --cursor <cursor_token>
-  ```
+| Subcommand | Arguments | Options / Flags | Description | Interactive Behavior | Example Usage |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `list` | None | `--cursor <cursor>` *(Optional)* | Lists up to 50 assets registered in your active Source. | Outputs relative paths. If more pages exist, prints a cursor token. | `imgix assets list --cursor 12345` |
+| `inspect` | `<path>` *(Required)* | `-a, --api` *(Optional)* | Inspects metadata for a specific image file path. | If `<path>` is omitted, prompts you to enter it. By default, prompts you to choose the inspection mode. | `imgix assets inspect /images/banner.jpg` |
 
-##### `imgix assets inspect <path>`
-* **Arguments**:
-  * `<path>` (Required): The relative path of a **specific image file** (e.g. `/images/banner.jpg`).
-* **Options**:
-  * `-a, --api` (Optional): Bypasses the prompt to inspect the file using administrative Management API records.
-* **Detailed Flow**:
-  By default, the CLI prompts you to choose how you want to inspect the asset:
-  1. **Public Render Properties (via `fm=json`)**:
-     * Queries the public CDN rendering URL (e.g. `https://your-domain.imgix.net/path/to/image.jpg?fm=json`), signing it automatically if a Secure URL Token is configured.
-     * Retrieves processed rendering metadata including image dimensions, colors, compression formats, and EXIF parameters.
-     * **Why it fails with HTTP 404**: This request will fail with an HTTP 404 error if the path does not point to an existing image file (e.g., if you request a directory like `/brands` or if you mistakenly include the Source name in the path like `/goxstream/logo.png`).
-  2. **Management API Record**:
-     * Queries the administrative imgix Management API for backend storage parameters, original file size, and creation timestamps.
-     * Use the `-a` or `--api` flag to skip the prompt and retrieve this data directly.
+#### Important Details:
+* **Warning**: The `<path>` parameter must be a direct file path (e.g., `/images/banner.jpg`), NOT a folder or include the Source name.
+* **Inspection Modes**:
+  1. **Public Render Properties (via `fm=json`)**: Queries the public CDN URL to retrieve image details (dimensions, EXIF, colors). **Fails with HTTP 404** if the file does not exist or if path is a directory (e.g., `/goxstream/brands`).
+  2. **Management API Record**: Queries the admin API for storage/ingest details. Skip the prompt with `-a` or `--api`.
 
----
+</details>
 
-#### `url` — URL Management & Optimization
+<details>
+<summary><b>URL Management & Optimization (url)</b> (Click to expand)</summary>
 
 Analyze or generate signed URLs for secure deployments.
 
-##### `imgix url sign <path> [params]`
-* **Arguments**:
-  * `<path>` (Required): The relative image path to sign (e.g. `/images/photo.png`).
-  * `[params]` (Optional): Query parameters to apply to the image before signing (e.g. `w=800&fit=crop` or `?w=800`).
-* **Behavior**: If arguments are omitted, the CLI guides you through text prompts.
-* **Output**: Resolves the Secure URL Token for your active Source and generates a secure MD5 signature (appended as the `s` query parameter) for all domains mapped to the Source. This prevents users from altering parameters to fetch unauthorized image crops or sizes.
+| Subcommand | Arguments | Options / Flags | Description | Interactive Behavior | Example Usage |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `sign` | `<path>` *(Required)*<br>`[params]` *(Optional)* | None | Generates a secure signed URL locally using MD5. | If `<path>` or `[params]` are omitted, prompts you to enter them. Resolves target sources and secure tokens. | `imgix url sign /photo.jpg "w=800"` |
+| `optimize` | `<url>` *(Required)* | None | Analyzes and suggests optimal parameters for an imgix URL. | If `<url>` is omitted, prompts you to enter a valid absolute URL. | `imgix url optimize https://my.imgix.net/photo.jpg?w=500` |
 
-##### `imgix url optimize <url>`
-* **Arguments**:
-  * `<url>` (Required): A fully qualified, absolute imgix image URL (e.g. `https://example.imgix.net/photo.jpg?w=500`).
-* **Behavior**: If the argument is omitted, you are prompted to input the URL.
-* **Analysis**: Compares the URL against performance best practices:
-  * Checks if automatic formatting and compression (`auto=format,compress`) are enabled.
-  * Checks if Client Hints (`ch=Width,DPR`) are configured to support responsive page layouts.
-  * Warns you if the URL is signed (modifying parameters will break the signature).
-* **Output**: Displays specific improvement recommendations and provides the fully optimized URL ready to copy.
+#### Detailed Analysis Output:
+* Checks for automatic formatting and compression (`auto=format,compress`).
+* Checks for Client Hints for responsive layout scaling (`ch=Width,DPR`).
+* Warns if the URL is already signed (modifying parameters will invalidate the signature).
 
----
+</details>
 
-#### `diagnose <url>` — CDN Cache Diagnostics
+<details>
+<summary><b>CDN Cache Diagnostics (diagnose)</b> (Click to expand)</summary>
 
-Verify caching and server headers for any deployed image.
+Verify caching and server headers for any deployed image URL.
 
-##### `imgix diagnose <url>`
-* **Arguments**:
-  * `<url>` (Required): The absolute URL of the image to analyze.
-* **Behavior**: Performs an HTTP request to inspect headers returned by the CDN edge.
-* **Output**: Prints a detailed report containing:
-  * **HTTP Status**: Connection health.
-  * **Server & Content-Type**: Verification that the CDN is serving the resource.
-  * **Encoding**: Verifies if gzip/brotli compression is active.
-  * **CDN Cache Diagnostics**: Inspects Fastly caching headers (`X-Cache`, `Cache Hits`, `X-Served-By`) and Cloudflare caching headers (`CF-Cache-Status`) to verify if the asset is served from cache.
-  * **Recommendations**: Detailed recommendations if the image suffers from missing cache headers, cache misses, or lack of Gzip/Brotli compression.
+| Command | Arguments | Options / Flags | Description | Interactive Behavior | Example Usage |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `diagnose` | `<url>` *(Required)* | None | Analyzes HTTP caching headers and server compression. | If `<url>` is omitted, prompts you to enter a valid absolute URL. | `imgix diagnose https://my.imgix.net/photo.jpg` |
 
----
+#### Diagnostic Checks Performed:
+* **Connection Status**: HTTP response health.
+* **Compression/Encoding**: Verifies if gzip/brotli is active.
+* **CDN Cache Status**: Inspects Fastly caching headers (`X-Cache`, `Cache Hits`, `X-Served-By`) and Cloudflare caching headers (`CF-Cache-Status`).
+* **Recommendations**: Alerts you if the asset has a cache miss, misses Cache-Control public cache instructions, or lacks gzip/brotli compression.
 
-#### `usage status` — Account Billing & Resource Consumption
+</details>
+
+<details>
+<summary><b>Billing & Resource Consumption (usage)</b> (Click to expand)</summary>
 
 Display recent usage details for your imgix subscription.
 
-##### `imgix usage status`
-* **Description**: Queries the billing endpoint of the imgix Management API.
-* **Output**: Displays the latest 5 generated credit consumption and resource usage reports.
-* **Troubleshooting**: If this command returns an **HTTP 403 Forbidden** error, verify that your API key is configured with the `Billing` read scope in your imgix dashboard.
+| Subcommand | Arguments | Options / Flags | Description | Interactive Behavior | Example Usage |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `status` | None | None | Queries the billing endpoint of the Management API. | Displays the latest 5 generated usage and credit consumption reports. | `imgix usage status` |
 
----
+#### Troubleshooting:
+* **HTTP 403 Forbidden**: If this command fails with a 403 error, verify that your API Key is configured with the `Billing` read scope in your imgix dashboard.
+
+</details>
 
 ---
 
