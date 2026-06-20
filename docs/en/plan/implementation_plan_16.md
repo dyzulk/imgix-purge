@@ -6,14 +6,9 @@ This plan aims to realize the escalation ideas from `ide_eskalasi_cli.md` by add
 
 > [!IMPORTANT]
 > - **Source File Restructuring**: We will relocate files inside `src/` to new subfolders (`bin`, `pkg`, `internal`) to improve code organization.
-> - **Secure URL Token Addition**: For the `url sign` feature, users must configure `IMGIX_SECURE_TOKEN` in `.env.local` or provide it during `imgix auth setup`.
-> - **API Key Permissions**: The `source` and `usage` features require an API key with account setting read permissions (not just `Purge` or `Asset Manager Browse` permissions).
-
-## Open Questions
-
-> [!NOTE]
-> 1. For the `assets inspect` feature, is it preferred to retrieve image metadata via the `fm=json` query parameter (served directly by the imgix rendering API) or through the management API? Using `fm=json` offers highly detailed EXIF data, pixel dimensions, bit depth, color profile, and original file metadata.
-> 2. For the `usage` command, the imgix API restricts statistics access depending on the subscription plan. Should we implement an elegant fallback message if the API returns a 403 (Forbidden) status code?
+> - **Global Credentials Alignment (`auth setup`)**: The interactive `imgix auth setup` wizard will be updated to prompt for the API Key, Source ID, and Secure URL Token all at once and save them in `~/.imgix-auth.json`.
+> - **API Key Permissions**: To run all CLI commands smoothly, using a single API Key with full scopes enabled (Admin) is recommended, or minimally having the following scopes: `Purge`, `Asset Manager Browse`, `Sources` (Read), and `Billing` (Read).
+> - **Usage Command 403 Forbidden Handling**: If the API returns a 403 (Forbidden) code, the CLI will output a friendly informational notice explaining that the API Key lacks `Billing` scope or the account tier does not support metrics.
 
 ---
 
@@ -65,7 +60,10 @@ We will relocate source files to the modular layout:
 - Implement `source list` and `source info <source-id>` subcommands using the Clack interface.
 
 #### [NEW] [src/cmd/assets.ts](../../../src/cmd/assets.ts)
-- Implement `assets list` (browsing files with simple pagination) and `assets inspect <path>` (requesting the imgix rendering format `fm=json` to output detailed image file metadata).
+- Implement `assets list` (browsing files with simple pagination).
+- Implement `assets inspect <path>` with two separate options:
+  - **By default**: Request image file metadata (EXIF, resolution, colors) from the rendering engine using the `fm=json` query parameter, which requires no authentication.
+  - **API Flag (`--api` / `-a`)**: Query the imgix Management API to retrieve administrative file details from the Asset Manager.
 
 #### [NEW] [src/cmd/url.ts](../../../src/cmd/url.ts)
 - Implement `url sign <path> [params]` using a local MD5 signing algorithm to append the secure signature parameter (`s=...`).
@@ -75,7 +73,7 @@ We will relocate source files to the modular layout:
 - Implement `diagnose <url>` by executing a HTTP `HEAD`/`GET` request, parsing cache headers (`X-Cache`, `CF-Cache-Status`), compression status, and rendering methods.
 
 #### [NEW] [src/cmd/usage.ts](../../../src/cmd/usage.ts)
-- Implement `usage status` to output bandwidth consumption and rendering request trends.
+- Implement `usage status` to output bandwidth consumption and rendering request trends, including graceful handling for 403 status codes.
 
 ---
 

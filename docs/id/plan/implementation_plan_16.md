@@ -6,14 +6,9 @@ Rencana ini bertujuan untuk merealisasikan ide-ide eskalasi dari `ide_eskalasi_c
 
 > [!IMPORTANT]
 > - **Restrukturisasi Berkas Sumber**: Kita akan memindahkan berkas-berkas di dalam `src/` ke subfolder baru (`bin`, `pkg`, `internal`) untuk meningkatkan kerapian kode.
-> - **Penambahan Kunci Token Pengaman (`Secure URL Token`)**: Untuk fitur `url sign`, pengguna harus menambahkan `IMGIX_SECURE_TOKEN` di dalam `.env.local` atau memasukkannya saat melakukan `imgix auth setup`.
-> - **Tuntutan Hak Akses Kunci API**: Fitur `source` dan `usage` membutuhkan kunci API dengan izin membaca setelan akun (bukan hanya izin `Purge` atau `Asset Manager Browse`).
-
-## Pertanyaan Terbuka
-
-> [!NOTE]
-> 1. Apakah fitur `assets inspect` lebih disukai mengambil metadata gambar melalui parameter kueri `fm=json` (disediakan langsung oleh server render imgix) atau melalui API manajemen? Menggunakan `fm=json` memiliki keunggulan menyajikan data EXIF, dimensi piksel, kedalaman bit, profil warna, dan metadata asli gambar secara sangat detail.
-> 2. Untuk perintah `usage`, API imgix membatasi akses statistik sesuai tingkat langganan. Apakah kami sebaiknya mengembalikan pesan penanganan yang elegan apabila API mengembalikan status 403 (Forbidden)?
+> - **Penyelarasan Kredensial Global (`auth setup`)**: Wizard interaktif `imgix auth setup` akan dimodifikasi untuk meminta API Key, Source ID, dan Secure URL Token secara bersamaan dan menyimpannya di `~/.imgix-auth.json`.
+> - **Izin Kunci API (API Key Scopes)**: Untuk menjalankan seluruh fungsionalitas CLI, direkomendasikan menggunakan satu Kunci API dengan hak akses penuh (*Admin/All Scopes*), atau minimal memiliki izin: `Purge`, `Asset Manager Browse`, `Sources` (Read), dan `Billing` (Read).
+> - **Penanganan Error 403 Perintah `usage`**: Jika API mengembalikan status 403 (Forbidden), CLI akan menampilkan informasi pencegahan secara bersahabat bahwa Kunci API kekurangan izin `Billing` atau langganan tidak mendukung metrik.
 
 ---
 
@@ -65,7 +60,10 @@ Kita akan memindahkan berkas sumber ke tata letak modular:
 - Implementasikan sub-perintah `source list` dan `source info <source-id>` menggunakan tata letak estetika Clack.
 
 #### [NEW] [src/cmd/assets.ts](../../../src/cmd/assets.ts)
-- Implementasikan sub-perintah `assets list` (menelusuri berkas dengan paginasi sederhana) dan `assets inspect <path>` (meminta format json render imgix `fm=json` untuk merender metadata berkas gambar secara detail).
+- Implementasikan sub-perintah `assets list` (menelusuri berkas dengan paginasi sederhana).
+- Implementasikan `assets inspect <path>` dengan dua opsi terpisah:
+  - **Secara default**: Melakukan request ke server render dengan parameter kueri `fm=json` untuk mengambil metadata berkas (EXIF, resolusi, warna) tanpa autentikasi.
+  - **Opsi bendera `--api` / `-a`**: Melakukan kueri ke API Manajemen imgix untuk mengambil metadata administratif aset dari Asset Manager.
 
 #### [NEW] [src/cmd/url.ts](../../../src/cmd/url.ts)
 - Implementasikan sub-perintah `url sign <path> [params]` menggunakan algoritma MD5 lokal untuk menempelkan tanda tangan keamanan (`s=...`).
@@ -75,7 +73,7 @@ Kita akan memindahkan berkas sumber ke tata letak modular:
 - Implementasikan sub-perintah `diagnose <url>` dengan mengirimkan HTTP `HEAD`/`GET` request, mengurai header cache (`X-Cache`, `CF-Cache-Status`), status kompresi, dan metode rendering.
 
 #### [NEW] [src/cmd/usage.ts](../../../src/cmd/usage.ts)
-- Implementasikan sub-perintah `usage status` untuk menampilkan grafik penggunaan bandwidth dan rendering request.
+- Implementasikan sub-perintah `usage status` untuk menampilkan grafik penggunaan bandwidth dan rendering request, dilengkapi penanganan anggun status error 403.
 
 ---
 
