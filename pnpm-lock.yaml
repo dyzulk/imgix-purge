@@ -216,9 +216,6 @@ importers:
       commander:
         specifier: ^15.0.0
         version: 15.0.0
-      imgix-cli-unofficial:
-        specifier: 'link:'
-        version: 'link:'
       picocolors:
         specifier: ^1.1.1
         version: 1.1.1

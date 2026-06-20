@@ -15,6 +15,7 @@
     "prepublishOnly": "pnpm build",
     "imgix": "node bin/imgix.js",
     "dev": "tsx src/bin/imgix.ts",
+    "test": "node --import tsx --test e2e/*.test.ts",
     "test:e2e": "node --import tsx --test e2e/*.test.ts",
     "types:check": "tsc --noEmit",
     "link:local": "npm link --ignore-engines",
@@ -47,7 +48,6 @@
   "dependencies": {
     "@clack/prompts": "^1.5.1",
     "commander": "^15.0.0",
-    "imgix-cli-unofficial": "link:",
     "picocolors": "^1.1.1"
   },
   "devDependencies": {
