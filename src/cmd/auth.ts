@@ -9,7 +9,7 @@ export async function runAuthSetup() {
   const apiKey = await p.text({
     message: 'Enter your imgix Management API Key (e.g. ak_...):',
     validate: (value) => {
-      if (value.trim().length === 0) return 'API Key is required.';
+      if (!value || value.trim().length === 0) return 'API Key is required.';
     },
   });
 
@@ -21,7 +21,7 @@ export async function runAuthSetup() {
   const sourceId = await p.text({
     message: 'Enter your imgix Source ID (e.g. 5ed5...):',
     validate: (value) => {
-      if (value.trim().length === 0) return 'Source ID is required.';
+      if (!value || value.trim().length === 0) return 'Source ID is required.';
     },
   });
 
