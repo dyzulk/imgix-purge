@@ -53,10 +53,14 @@ imgix auth setup
 
 The wizard will prompt you to enter:
 1. **imgix Management API Key**: (e.g. `ak_...`) - Required.
-2. **imgix Source ID**: (e.g. `5ed5...`) - Required.
-3. **Secure URL Token**: (e.g. `1a2b...`) - Optional (used for offline signing).
+
+To manage or generate API keys, visit the [imgix API Keys Dashboard](https://dashboard.imgix.com/api-keys). For details on setting up keys and scopes, check the [Official API Key Setup Documentation](https://docs.imgix.com/setup/api-keys).
+
+All other configurations (Source IDs, domains, and Secure URL Tokens) are resolved dynamically from the API at runtime.
 
 Credentials are saved locally under `~/.imgix-auth.json` with secure owner-only permissions.
+
+If a command requiring authentication is run and no API key is saved, the CLI will automatically trigger this wizard on the fly.
 
 ### Required API Key Scopes
 
@@ -85,18 +89,7 @@ imgix auth clear
 
 ## Command Reference
 
-### Targeting Options
-
-You can override global configuration per-command using these options:
-
-| Flag | Env Variable | Description |
-| :--- | :--- | :--- |
-| `--api-key <key>` | `IMGIX_API_KEY` | Overrides saved imgix Management API Key |
-| `--source-id <id>` | `IMGIX_SOURCE_ID` | Overrides saved imgix Source ID |
-| `--secure-token <token>` | `IMGIX_SECURE_TOKEN` | Overrides saved Secure URL Token |
-| `--domain <dom>` | `IMGIX_DOMAINS` | Specify target domain(s) manually (comma-separated) |
-
----
+The CLI features a fully interactive wizard and checklist interface. If you run commands without arguments, the CLI will automatically fetch options from the API and guide you step-by-step using input boxes, dropdowns, and checklist prompts.
 
 ### Commands
 
