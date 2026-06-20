@@ -54,7 +54,7 @@ imgix auth setup
 The wizard will prompt you to enter:
 1. **imgix Management API Key**: (e.g. `ak_...`) - Required.
 
-To manage or generate API keys, visit the [imgix API Keys Dashboard](https://dashboard.imgix.com/api-keys). For details on setting up keys and scopes, check the [Official API Key Setup Documentation](https://docs.imgix.com/setup/api-keys).
+To manage or generate API keys, visit the [imgix API Keys Dashboard](https://dashboard.imgix.com/api-keys). For details on setting up keys and scopes, check the [Official API Key Setup Documentation](https://docs.imgix.com/apis/management/overview).
 
 All other configurations (Source IDs, domains, and Secure URL Tokens) are resolved dynamically from the API at runtime.
 

@@ -5,7 +5,7 @@ import { ui } from '../internal/ui/prompts.js';
 export async function runAuthSetup() {
   ui.intro('imgix CLI Authentication Setup');
   ui.log.info('To manage or create API keys and view official scopes/permissions, visit:');
-  ui.log.info(pc.cyan('https://docs.imgix.com/setup/api-keys'));
+  ui.log.info(pc.cyan('https://docs.imgix.com/apis/management/overview'));
   ui.log.info('You can generate your keys directly at: ' + pc.cyan('https://dashboard.imgix.com/api-keys'));
 
   const apiKey = await ui.text({
