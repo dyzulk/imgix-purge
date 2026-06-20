@@ -45,6 +45,7 @@
   "packageManager": "pnpm@11.5.3",
   "type": "module",
   "dependencies": {
+    "@inquirer/prompts": "^8.5.2",
     "commander": "^15.0.0",
     "imgix-purge": "link:"
   },

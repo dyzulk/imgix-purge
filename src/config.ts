@@ -1,3 +1,5 @@
+import { getGlobalAuth } from './auth.js';
+
 export interface Config {
   apiKey: string;
   sourceId: string;
@@ -7,8 +9,9 @@ export interface Config {
   dryRun: boolean;
 }
 
-const apiKey = process.env.IMGIX_API_KEY || '';
-const sourceId = process.env.IMGIX_SOURCE_ID || '';
+const globalAuth = getGlobalAuth();
+const apiKey = process.env.IMGIX_API_KEY || globalAuth?.apiKey || '';
+const sourceId = process.env.IMGIX_SOURCE_ID || globalAuth?.sourceId || '';
 
 const args = process.argv.slice(2);
 const dryRun = args.includes('--dry-run') || args.includes('-d');
@@ -40,7 +43,8 @@ export const config: Config = {
 export function validateConfig(): void {
   if (!config.apiKey || !config.sourceId) {
     console.error('Error: Missing API Key or Source ID.');
-    console.error('Please provide them via --api-key and --source-id flags, or by setting the IMGIX_API_KEY and IMGIX_SOURCE_ID environment variables.');
+    console.error('Please configure them globally by running: "imgix-purge auth setup"');
+    console.error('Or provide them via --api-key and --source-id flags / environment variables.');
     console.error('Run "imgix-purge --help" for more details.');
     process.exit(1);
   }
