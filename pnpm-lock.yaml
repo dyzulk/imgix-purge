@@ -216,7 +216,7 @@ importers:
       commander:
         specifier: ^15.0.0
         version: 15.0.0
-      imgix-purge:
+      imgix-cli-unofficial:
         specifier: 'link:'
         version: 'link:'
       picocolors:

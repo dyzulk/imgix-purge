@@ -7,8 +7,8 @@ import { config } from './config.js';
 const program = new Command();
 
 program
-  .name('imgix-purge')
-  .description('A CLI tool to bulk purge all assets in an imgix Source cache.')
+  .name('imgix')
+  .description('A CLI companion tool to manage and purge imgix assets.')
   .configureHelp({
     sortSubcommands: true,
   })

@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 
-const AUTH_FILE_PATH = path.join(os.homedir(), '.imgix-purge-auth.json');
+const AUTH_FILE_PATH = path.join(os.homedir(), '.imgix-auth.json');
 
 export interface AuthConfig {
   apiKey: string;

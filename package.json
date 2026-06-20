@@ -1,10 +1,10 @@
 {
-  "name": "imgix-purge",
+  "name": "imgix-cli-unofficial",
   "version": "1.0.0",
   "description": "A CLI tool to bulk purge all assets in an imgix Source cache.",
   "main": "dist/index.js",
   "bin": {
-    "imgix-purge": "./bin/imgix-purge.js"
+    "imgix": "./bin/imgix.js"
   },
   "files": [
     "dist",
@@ -13,12 +13,12 @@
   "scripts": {
     "build": "tsup",
     "prepublishOnly": "pnpm build",
-    "imgix-purge": "node bin/imgix-purge.js",
+    "imgix": "node bin/imgix.js",
     "dev": "tsx src/index.ts",
     "test:e2e": "node --import tsx --test e2e/*.test.ts",
     "types:check": "tsc --noEmit",
     "link:local": "npm link --ignore-engines",
-    "unlink:local": "npm rm --global imgix-purge"
+    "unlink:local": "npm rm --global imgix"
   },
   "keywords": [
     "imgix",
@@ -32,12 +32,12 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dyzulk/imgix-purge.git"
+    "url": "git+https://github.com/dyzulk/imgix-cli-unofficial.git"
   },
   "bugs": {
-    "url": "https://github.com/dyzulk/imgix-purge/issues"
+    "url": "https://github.com/dyzulk/imgix-cli-unofficial/issues"
   },
-  "homepage": "https://github.com/dyzulk/imgix-purge#readme",
+  "homepage": "https://github.com/dyzulk/imgix-cli-unofficial#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
@@ -47,7 +47,7 @@
   "dependencies": {
     "@clack/prompts": "^1.5.1",
     "commander": "^15.0.0",
-    "imgix-purge": "link:",
+    "imgix-cli-unofficial": "link:",
     "picocolors": "^1.1.1"
   },
   "devDependencies": {
@@ -57,3 +57,4 @@
     "typescript": "^6.0.3"
   }
 }
+
