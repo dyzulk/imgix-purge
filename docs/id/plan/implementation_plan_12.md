@@ -13,12 +13,12 @@ Kita akan memasang paket UI interaktif.
 ### 2. Membuat Sistem Manajemen Kredensial Global
 Kita akan membuat direktori baru untuk perintah `auth` beserta manajemen file penyimpanannya.
 
-#### [NEW] [src/auth.ts](../../src/auth.ts)
+#### [NEW] [src/auth.ts](../../../src/auth.ts)
 - Fungsi `getGlobalAuth()`: Membaca file `~/.imgix-purge-auth.json`.
 - Fungsi `setGlobalAuth()`: Menyimpan/menimpa file `~/.imgix-purge-auth.json`.
 - Fungsi `clearGlobalAuth()`: Menghapus file kredensial ("logout").
 
-#### [NEW] [src/cmd/auth.ts](../../src/cmd/auth.ts)
+#### [NEW] [src/cmd/auth.ts](../../../src/cmd/auth.ts)
 - Perintah `auth setup`: Menjalankan Wizard interaktif yang menanyakan "API Key" dan "Source ID", kemudian menyimpannya.
 - Perintah `auth status`: Melaporkan status kredensial saat ini (apakah sudah disetel, dari mana asalnya, dan menampilkan sebagian ujung API Key untuk konfirmasi).
 - Perintah `auth clear`: Meminta konfirmasi lalu menghapus kredensial yang tersimpan.
@@ -26,13 +26,13 @@ Kita akan membuat direktori baru untuk perintah `auth` beserta manajemen file pe
 ### 3. Memperbarui Konfigurasi Utama
 Integrasikan sistem Auth file ke dalam pembacaan awal saat program berjalan.
 
-#### [MODIFY] [src/config.ts](../../src/config.ts)
+#### [MODIFY] [src/config.ts](../../../src/config.ts)
 - Tambahkan logika pembacaan cadangan (*fallback*). Jika `IMGIX_API_KEY` kosong di ENV, baca dari `getGlobalAuth()`.
 
 ### 4. Meregistrasikan Perintah 'auth' ke Commander
 Modifikasi *entry point* aplikasi agar mengenali kumpulan perintah `auth`.
 
-#### [MODIFY] [src/index.ts](../../src/index.ts)
+#### [MODIFY] [src/index.ts](../../../src/index.ts)
 - Daftarkan `auth` sebagai sebuah *Command Group*.
 - Masukkan `setup`, `status`, dan `clear` sebagai sub-perintah (*sub-command*) di bawah `auth`.
 

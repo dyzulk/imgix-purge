@@ -14,7 +14,7 @@ Kita akan mencabut dependensi Inquirer dan memasang Clack.
 ### 2. Merombak Visual Autentikasi (Setup)
 Kita akan menulis ulang fungsi *wizard* dengan API `@clack/prompts`.
 
-#### [MODIFY] [src/cmd/auth.ts](../../src/cmd/auth.ts)
+#### [MODIFY] [src/cmd/auth.ts](../../../src/cmd/auth.ts)
 - Menggunakan `intro('imgix-purge Authentication Setup')` dan `outro()` untuk pembuka/penutup.
 - Mengganti pemanggilan `input()` dari Inquirer menjadi `text()` milik Clack.
 - Menambahkan validasi pembatalan dengan `isCancel`.

@@ -22,7 +22,7 @@ Based on your feedback, we analyzed the CLI design:
 
 ### CLI & Configuration
 
-#### [MODIFY] [config.ts](../../src/config.ts)
+#### [MODIFY] [config.ts](../../../src/config.ts)
 - Modify the arguments parser to:
   - Check for `-h` or `--help` flag.
   - Check for `-d` or `--dry-run` flag.
@@ -33,7 +33,7 @@ Based on your feedback, we analyzed the CLI design:
 
 ### Core Execution Flow
 
-#### [MODIFY] [purge.ts](../../src/purge.ts)
+#### [MODIFY] [purge.ts](../../../src/purge.ts)
 - Call `showHelp()` immediately if the help flag is detected, before performing environment validation.
 
 ---

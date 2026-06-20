@@ -62,14 +62,14 @@ Mengapa repositori CLI besar seperti Wrangler (`workers-sdk`), Vercel, dan Rende
 
 ## Proposed Changes
 
-#### [MODIFY] [package.json](../../package.json)
+#### [MODIFY] [package.json](../../../package.json)
 * Menambahkan dependensi `tsup` untuk kompilasi kode dari `src` ke `dist`.
 * Menyesuaikan skrip `"build"`, `"dev"`, dan `"bin"` untuk mendukung eksekusi dari hasil kompilasi.
 
-#### [NEW] [tsup.config.ts](../../tsup.config.ts)
+#### [NEW] [tsup.config.ts](../../../tsup.config.ts)
 * Membuat konfigurasi pembangun berkas JavaScript ESM tunggal dari berkas TypeScript.
 
-#### [NEW] [bin/imgix-purge.js](../../bin/imgix-purge.js)
+#### [NEW] [bin/imgix-purge.js](../../../bin/imgix-purge.js)
 * Membuat berkas executable pembungkus (wrapper) yang mengarah ke `./dist/purge.js`.
 
 ---

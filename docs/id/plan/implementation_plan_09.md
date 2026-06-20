@@ -9,7 +9,7 @@ Kita akan menyiapkan mekanisme agar Anda dapat "menginstal" (mendaftarkan) dan "
 ### 1. Menambahkan Script Bantuan
 Saya akan menambahkan dua baris script baru di dalam `package.json` agar Anda tidak perlu repot menghafal perintah pnpm global.
 
-#### [MODIFY] [package.json](../../package.json)
+#### [MODIFY] [package.json](../../../package.json)
 - Menambahkan `"link:local": "pnpm link --global"` 
   (Berfungsi untuk membuat *shortcut* alias dari kode sumber Anda ke direktori global sistem Windows Anda).
 - Menambahkan `"unlink:local": "pnpm rm --global imgix-purge"` 

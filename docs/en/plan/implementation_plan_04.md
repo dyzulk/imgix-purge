@@ -22,7 +22,7 @@ This plan outlines the steps to configure `.gitignore` (crucial to protect sensi
 
 ### Git Configuration
 
-#### [MODIFY] [.gitignore](../../.gitignore)
+#### [MODIFY] [.gitignore](../../../.gitignore)
 - Add entries for:
   - `node_modules/`
   - `.env`

@@ -18,7 +18,7 @@ Rencana ini akan merekonstruksi menu *help* agar rapi, profesional, dan informat
 ### 1. Memindahkan Opsi Global ke Root Command
 Opsi yang berlaku secara global akan diangkat ke atas (bukan lagi tersembunyi di dalam perintah `purge`), sehingga akan langsung terlihat ketika pengguna mengetik `imgix-purge --help`.
 
-#### [MODIFY] [src/index.ts](../../src/index.ts)
+#### [MODIFY] [src/index.ts](../../../src/index.ts)
 - Memindahkan `.option('--api-key <key>', ...)` dan `.option('--source-id <id>', ...)` ke konfigurasi objek `program` (sebelum `.command('purge')`).
 - Menambahkan blok `.addHelpText('after', ...)` ke objek `program` untuk menyisipkan panduan *Environment Variables* (penjelasan tentang `IMGIX_API_KEY` dan `IMGIX_SOURCE_ID`) di bagian bawah *help menu*.
 - Mengambil nilai `program.opts()` di dalam aksi `purge` untuk menyesuaikan nilai di objek `config`.
@@ -26,7 +26,7 @@ Opsi yang berlaku secara global akan diangkat ke atas (bukan lagi tersembunyi di
 ### 2. Menghapus Logika Help Manual (Redundan)
 Karena Commander akan mengambil alih urusan cetak *help menu* secara total, kode *parser* manual lama di `config.ts` tidak lagi diperlukan.
 
-#### [MODIFY] [src/config.ts](../../src/config.ts)
+#### [MODIFY] [src/config.ts](../../../src/config.ts)
 - Menghapus eksport fungsi `showHelp()`.
 - Menghapus pengecekan boolean `help` dari interface dan parser argumen (karena bendera `-h`/`--help` akan diintersep langsung oleh Commander sebelum mencapai logika kita).
 

@@ -24,22 +24,22 @@ We will split the codebase into four separate files to ensure high cohesion and 
 
 ### Core Refactoring
 
-#### [NEW] [config.ts](../../src/config.ts)
+#### [NEW] [config.ts](../../../src/config.ts)
 - Define a type-safe configuration interface.
 - Implement env loading using `dotenv`.
 - Export a read-only configuration object including `apiKey`, `sourceId`, `execute`, and `dryRun`.
 
-#### [NEW] [utils.ts](../../src/utils.ts)
+#### [NEW] [utils.ts](../../../src/utils.ts)
 - Implement `delay(ms)` helper for throttle control.
 - Implement URL normalization (e.g., prefixing slashes and removing duplicate slashes).
 
-#### [NEW] [api.ts](../../src/api.ts)
+#### [NEW] [api.ts](../../../src/api.ts)
 - Define response interfaces for JSON:API format.
 - Implement `fetchSourceDomains(apiKey, sourceId)` to fetch all subdomains and custom domains.
 - Implement `fetchAssetsPage(apiKey, nextUrl)` to retrieve a page of assets.
 - Implement `submitPurgeRequest(apiKey, url)` to send a POST purge request.
 
-#### [MODIFY] [purge.ts](../../src/purge.ts)
+#### [MODIFY] [purge.ts](../../../src/purge.ts)
 - Import from `config.ts`, `utils.ts`, and `api.ts`.
 - Clean up the main execution script to focus entirely on routing flow, progress reporting, and bulk execution loop.
 

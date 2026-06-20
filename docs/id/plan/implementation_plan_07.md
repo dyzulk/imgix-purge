@@ -9,7 +9,7 @@ Rencana ini bertujuan untuk menghilangkan penulisan path absolut (atau penggunaa
 ### 1. Refactor E2E Tests (Path Resolution)
 Mengubah penulisan `path.resolve(process.cwd(), ...)` menjadi path eksekusi relatif sederhana di command line.
 
-#### [MODIFY] [e2e/purge.test.ts](../../e2e/purge.test.ts)
+#### [MODIFY] [e2e/purge.test.ts](../../../e2e/purge.test.ts)
 - **Hapus**: `const CLI_PATH = path.resolve(process.cwd(), 'bin', 'imgix-purge.js');`
 - **Ganti**: Langsung memanggil `node ./bin/imgix-purge.js` di dalam fungsi `execAsync()`.
 
@@ -17,7 +17,7 @@ Mengubah penulisan `path.resolve(process.cwd(), ...)` menjadi path eksekusi rela
 Semua `implementation_plan_*.md` yang terlanjur menggunakan format URL lokal IDE akan direplace menjadi format *relative link* GitHub.
 
 #### [MODIFY] docs/plan/implementation_plan_*.md
-- Mengubah format `[package.json](../../package.json)` menjadi `[package.json](../../package.json)`.
+- Mengubah format `[package.json](../../../package.json)` menjadi `[package.json](../../../package.json)`.
 - Perubahan yang sama berlaku untuk semua referensi file (`src/config.ts`, `bin/imgix-purge.js`, `tsup.config.ts`, dll) di semua dokumen dalam folder `docs/plan`.
 
 ## Verification Plan

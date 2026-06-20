@@ -32,21 +32,21 @@ We recommend using **Node.js + TypeScript** (executed via `tsx` for zero-compile
 
 ### Configuration and Dependencies
 
-#### [MODIFY] [package.json](../../package.json)
+#### [MODIFY] [package.json](../../../package.json)
 - Add required devDependencies: `typescript`, `@types/node`, `tsx`, `dotenv`.
 - Add a script entry: `"purge": "tsx src/purge.ts"`.
 
-#### [NEW] [tsconfig.json](../../tsconfig.json)
+#### [NEW] [tsconfig.json](../../../tsconfig.json)
 - Setup basic TypeScript configuration suitable for Node.js ES Modules.
 
-#### [MODIFY] [.env.example](../../.env.example)
+#### [MODIFY] [.env.example](../../../.env.example)
 - Update to include `IMGIX_SOURCE_ID`.
 
 ---
 
 ### Core Implementation
 
-#### [NEW] [purge.ts](../../src/purge.ts)
+#### [NEW] [purge.ts](../../../src/purge.ts)
 - Implement a script that:
   - Loads environment variables from `.env.local`.
   - Validates the presence of `IMGIX_API_KEY` and `IMGIX_SOURCE_ID`.
