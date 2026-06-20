@@ -154,3 +154,47 @@ export async function fetchSourceDetail(apiKey: string, sourceId: string): Promi
 
   return (await response.json()) as SourceDetailResponse;
 }
+
+export interface AssetDetailResponse {
+  data: {
+    id: string;
+    type: string;
+    attributes: {
+      origin_path: string;
+      media_type: string;
+      file_size: number;
+      width: number;
+      height: number;
+      date_created: string;
+      date_modified: string;
+      [key: string]: any;
+    };
+  };
+}
+
+export async function fetchAssets(apiKey: string, sourceId: string, cursor?: string): Promise<AssetResponse> {
+  let url = `${API_BASE}/sources/${sourceId}/assets?page[size]=50`;
+  if (cursor) {
+    url += `&page[cursor]=${cursor}`;
+  }
+  return fetchAssetsPage(apiKey, url);
+}
+
+export async function fetchAssetDetail(apiKey: string, sourceId: string, originPath: string): Promise<AssetDetailResponse> {
+  const cleanPath = originPath.startsWith('/') ? originPath.substring(1) : originPath;
+  const assetId = `${sourceId}/${cleanPath}`;
+  // Note: the assetId should be encoded as it contains a slash, e.g. sourceId/path
+  const response = await fetch(`${API_BASE}/assets/${encodeURIComponent(assetId)}`, {
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Accept': 'application/vnd.api+json',
+    },
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Failed to fetch asset details (HTTP ${response.status}): ${text}`);
+  }
+
+  return (await response.json()) as AssetDetailResponse;
+}
