@@ -145,6 +145,44 @@ imgix-cli-unofficial/
 
 ---
 
+## Tahapan Eksekusi Bertahap (Batch 1 - 8)
+
+Untuk memastikan stabilitas pengerjaan, seluruh fitur akan diimplementasikan secara bertahap dalam 8 batch sebagai berikut:
+
+- **Batch 1 (Restrukturisasi Folder & Utilitas UI)**:
+  - Memindahkan berkas-berkas dari root `src/` ke folder modular `src/bin/`, `src/pkg/`, dan `src/internal/utils/`.
+  - Membuat berkas wrapper UI `src/internal/ui/prompts.ts`.
+  - Menyesuaikan setelan kompilasi `package.json`, `tsconfig.json`, `tsup.config.ts`, dan wrapper `bin/imgix.js`.
+  
+- **Batch 2 (Penyelarasan Kredensial Global & Setup Wizard)**:
+  - Memperbarui `src/pkg/auth.ts` dan `src/pkg/config.ts` untuk memproses Secure URL Token secara fallback.
+  - Memperbarui skrip `src/cmd/auth.ts` agar wizard setup meminta API Key, Source ID, dan Token secara terpadu.
+
+- **Batch 3 (Implementasi Grup Perintah `source`)**:
+  - Menambahkan panggilan REST API `/sources` di `src/pkg/api.ts`.
+  - Membuat modul `src/cmd/source.ts` dengan fitur `source list` dan `source info` bergaya Clack.
+
+- **Batch 4 (Implementasi Grup Perintah `assets`)**:
+  - Menambahkan integrasi endpoint aset di `src/pkg/api.ts`.
+  - Membuat modul `src/cmd/assets.ts` (list & inspect) dengan dukungan default `fm=json` dan bendera kustom `--api` / `-a`.
+
+- **Batch 5 (Implementasi Grup Perintah `url`)**:
+  - Membuat modul `src/cmd/url.ts` dengan utilitas penandatanganan MD5 lokal (`url sign`) dan analisis optimasi kueri (`url optimize`).
+
+- **Batch 6 (Implementasi Perintah `diagnose`)**:
+  - Membuat modul `src/cmd/diagnose.ts` untuk memverifikasi detail cache header CDN, kompresi, dan metode rendering.
+
+- **Batch 7 (Implementasi Grup Perintah `usage`)**:
+  - Menambahkan integrasi API billing/penggunaan di `src/pkg/api.ts`.
+  - Membuat modul `src/cmd/usage.ts` untuk statistik bandwidth dan request serta penanganan error 403.
+
+- **Batch 8 (Rute Utama & Pengujian E2E Modular)**:
+  - Mendaftarkan rute perintah baru ke Commander di `src/bin/imgix.ts`.
+  - Membuat skenario tes E2E untuk masing-masing modul di folder `e2e/` (mencakup `auth`, `source`, `assets`, `url`, `diagnose`, dan `usage`).
+  - Memvalidasi build bundel akhir dan kelulusan seluruh tes unit.
+
+---
+
 ## Rencana Verifikasi
 
 ### Pengujian Otomatis

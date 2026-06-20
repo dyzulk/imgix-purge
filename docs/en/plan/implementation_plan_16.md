@@ -145,6 +145,44 @@ imgix-cli-unofficial/
 
 ---
 
+## Gradual Execution Plan (Batch 1 - 8)
+
+To ensure stability during implementation, the feature set will be rolled out gradually across 8 distinct batches:
+
+- **Batch 1 (Folder Restructuring & UI Helpers)**:
+  - Relocate files from `src/` root to modular folders `src/bin/`, `src/pkg/`, and `src/internal/utils/`.
+  - Create the UI helper module `src/internal/ui/prompts.ts`.
+  - Adjust build configurations (`package.json`, `tsconfig.json`, `tsup.config.ts`, `bin/imgix.js`).
+  
+- **Batch 2 (Global Credentials Alignment & Setup Wizard)**:
+  - Update `src/pkg/auth.ts` and `src/pkg/config.ts` to support optional secure token fallback resolution.
+  - Update `src/cmd/auth.ts` to prompt for API Key, Source ID, and Secure URL Token in the setup wizard.
+
+- **Batch 3 (Implement `source` Command Group)**:
+  - Add `/sources` Management API requests in `src/pkg/api.ts`.
+  - Create `src/cmd/source.ts` supporting `source list` and `source info` with Clack design.
+
+- **Batch 4 (Implement `assets` Command Group)**:
+  - Add assets endpoint requests in `src/pkg/api.ts`.
+  - Create `src/cmd/assets.ts` (list & inspect) supporting default `fm=json` rendering metadata and kustom `--api` / `-a` flag.
+
+- **Batch 5 (Implement `url` Command Group)**:
+  - Create `src/cmd/url.ts` supporting MD5 signed URL generation (`url sign`) and query optimization recommendation (`url optimize`).
+
+- **Batch 6 (Implement `diagnose` Command)**:
+  - Create `src/cmd/diagnose.ts` to inspect CDN cache headers, compression, and rendering regimes.
+
+- **Batch 7 (Implement `usage` Command)**:
+  - Add usage statistics requests in `src/pkg/api.ts`.
+  - Create `src/cmd/usage.ts` supporting bandwidth/request trends, with graceful 403 handling.
+
+- **Batch 8 (Routing Configuration & Modular E2E Tests)**:
+  - Configure the subcommands routes in Commander (`src/bin/imgix.ts`).
+  - Create individual subcommand E2E tests in the `e2e/` directory (`auth`, `source`, `assets`, `url`, `diagnose`, `usage`).
+  - Run the final build compiler and verify all tests pass successfully.
+
+---
+
 ## Verification Plan
 
 ### Automated Tests
