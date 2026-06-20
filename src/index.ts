@@ -8,9 +8,14 @@ const program = new Command();
 program
   .name('imgix-purge')
   .description('A CLI tool to bulk purge all assets in an imgix Source cache.')
-  .version('1.0.0')
+  .configureHelp({
+    sortSubcommands: true,
+  })
+  .addHelpCommand(false)
   .option('--api-key <key>', 'Your imgix Management API Key (overrides IMGIX_API_KEY env)')
   .option('--source-id <id>', 'Your imgix Source ID (overrides IMGIX_SOURCE_ID env)')
+  .version('1.0.0', '-V, --version', 'Output the version number')
+  .helpOption('-h, --help', 'Display help for command')
   .addHelpText('after', `
 Environment Variables:
   - IMGIX_API_KEY      Your imgix Management API Key (e.g. ak_...)
