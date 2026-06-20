@@ -12,10 +12,25 @@ program
     sortSubcommands: true,
   })
   .addHelpCommand(false)
-  .option('-d, --dry-run', 'Run in simulation mode (list assets that would be purged without calling the Purge API)')
-  .option('--domain <dom>', 'Specify target domain(s) manually (comma-separated)')
+  .configureOutput({
+    writeOut: (str) => {
+      let output = str;
+      output = output.replace('  --api-key', '\n  [ Configuration & Targeting ]\n  --api-key');
+      output = output.replace('  -d, --dry-run', '\n  [ Execution Modes ]\n  -d, --dry-run');
+      output = output.replace('  -V, --version', '\n  [ System Options ]\n  -V, --version');
+      process.stdout.write(output);
+    }
+  })
+  // --- Configuration & Targeting ---
   .option('--api-key <key>', 'Your imgix Management API Key (overrides IMGIX_API_KEY env)')
   .option('--source-id <id>', 'Your imgix Source ID (overrides IMGIX_SOURCE_ID env)')
+  .option('--domain <dom>', 'Specify target domain(s) manually (comma-separated)')
+  .option('--batch-size <num>', 'Number of assets to purge in each API call (default: 10000)', parseInt)
+  
+  // --- Execution Modes ---
+  .option('-d, --dry-run', 'Run in simulation mode (list assets that would be purged without calling the Purge API)')
+  
+  // --- System Options ---
   .version('1.0.0', '-V, --version', 'Output the version number')
   .helpOption('-h, --help', 'Display help for command')
   .addHelpText('after', `
@@ -39,6 +54,7 @@ program
     if (globalOpts.apiKey) config.apiKey = globalOpts.apiKey;
     if (globalOpts.sourceId) config.sourceId = globalOpts.sourceId;
     if (globalOpts.dryRun) config.dryRun = globalOpts.dryRun;
+    if (globalOpts.batchSize && !isNaN(globalOpts.batchSize)) config.batchSize = globalOpts.batchSize;
     
     // Domain comes from global options
     if (globalOpts.domain) config.domains = globalOpts.domain.split(',').map((d: string) => d.trim());

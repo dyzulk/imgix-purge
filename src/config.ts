@@ -2,6 +2,7 @@ export interface Config {
   apiKey: string;
   sourceId: string;
   domains: string[];
+  batchSize: number;
   execute: boolean;
   dryRun: boolean;
 }
@@ -30,6 +31,7 @@ export const config: Config = {
   apiKey,
   sourceId,
   domains,
+  batchSize: 10000,
   execute,
   dryRun,
 };
