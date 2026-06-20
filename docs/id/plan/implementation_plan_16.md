@@ -1,10 +1,11 @@
 # Rencana Implementasi 16: Rencana Eskalasi Fitur CLI imgix (Unofficial)
 
-Rencana ini bertujuan untuk merealisasikan ide-ide eskalasi dari `ide_eskalasi_cli.md` dengan menambahkan sub-perintah `source`, `assets`, `url`, `diagnose`, dan `usage` di bawah CLI `imgix` yang baru.
+Rencana ini bertujuan untuk merealisasikan ide-ide eskalasi dari `ide_eskalasi_cli.md` dengan menambahkan sub-perintah `source`, `assets`, `url`, `diagnose`, dan `usage` di bawah CLI `imgix` yang baru, serta merestrukturisasi berkas ke dalam pola folder modular terpadu (`src/bin`, `src/pkg`, `src/internal`).
 
 ## Peninjauan Pengguna Diperlukan
 
 > [!IMPORTANT]
+> - **Restrukturisasi Berkas Sumber**: Kita akan memindahkan berkas-berkas di dalam `src/` ke subfolder baru (`bin`, `pkg`, `internal`) untuk meningkatkan kerapian kode.
 > - **Penambahan Kunci Token Pengaman (`Secure URL Token`)**: Untuk fitur `url sign`, pengguna harus menambahkan `IMGIX_SECURE_TOKEN` di dalam `.env.local` atau memasukkannya saat melakukan `imgix auth setup`.
 > - **Tuntutan Hak Akses Kunci API**: Fitur `source` dan `usage` membutuhkan kunci API dengan izin membaca setelan akun (bukan hanya izin `Purge` atau `Asset Manager Browse`).
 
@@ -18,29 +19,44 @@ Rencana ini bertujuan untuk merealisasikan ide-ide eskalasi dari `ide_eskalasi_c
 
 ## Rencana Perubahan
 
-### Konfigurasi dan Setelan Awal
+### 1. Penataan Ulang Struktur Berkas (Restrukturisasi)
 
-#### [MODIFY] [src/config.ts](../../../src/config.ts)
-- Tambahkan dukungan pembacaan `secureToken` (`IMGIX_SECURE_TOKEN`) dari variabel lingkungan atau masukan fallback konfigurasi auth global.
+Kita akan memindahkan berkas sumber ke tata letak modular:
 
-#### [MODIFY] [src/auth.ts](../../../src/auth.ts)
-- Perbarui struktur antarmuka `AuthConfig` untuk menyertakan bidang opsional `secureToken`.
+#### [NEW] [src/bin/imgix.ts](../../../src/bin/imgix.ts)
+- Pindahkan dari `src/index.ts`. Ini adalah entry point utama CLI.
 
-#### [MODIFY] [src/cmd/auth.ts](../../../src/cmd/auth.ts)
-- Perbarui wizard interaktif `auth setup` agar menanyakan `Secure URL Token` (opsional, untuk penandatanganan URL).
+#### [NEW] [src/pkg/config.ts](../../../src/pkg/config.ts)
+- Pindahkan dari `src/config.ts`. Tambahkan dukungan pembacaan `secureToken` (`IMGIX_SECURE_TOKEN`).
+
+#### [NEW] [src/pkg/auth.ts](../../../src/pkg/auth.ts)
+- Pindahkan dari `src/auth.ts`. Perbarui `AuthConfig` untuk menyertakan `secureToken` opsional.
+
+#### [NEW] [src/pkg/api.ts](../../../src/pkg/api.ts)
+- Pindahkan dari `src/api.ts`. Tambahkan integrasi API baru (`fetchSources`, `fetchSourceDetail`, `fetchBillingUsage`).
+
+#### [NEW] [src/internal/utils/helper.ts](../../../src/internal/utils/helper.ts)
+- Pindahkan dari `src/utils.ts`. Menyediakan utilitas delay dan normalisasi.
+
+#### [DELETE] Berkas Lama di Root `src/`
+- Hapus berkas `src/index.ts`, `src/config.ts`, `src/auth.ts`, `src/api.ts`, dan `src/utils.ts` setelah dipindahkan.
 
 ---
 
-### Integrasi API Inti
+### 2. Penyesuaian Konfigurasi & Build
 
-#### [MODIFY] [src/api.ts](../../../src/api.ts)
-- Implementasikan fungsi `fetchSources(apiKey)`: Memanggil `GET https://api.imgix.com/api/v1/sources`.
-- Implementasikan fungsi `fetchSourceDetail(apiKey, sourceId)`: Memanggil `GET https://api.imgix.com/api/v1/sources/:source_id`.
-- Implementasikan fungsi `fetchBillingUsage(apiKey)`: Memanggil API statistik penggunaan jika didukung oleh akun pengguna.
+#### [MODIFY] [package.json](../../../package.json)
+- Perbarui skrip `"dev"` menjadi `"tsx src/bin/imgix.ts"`.
+
+#### [MODIFY] [bin/imgix.js](../../../bin/imgix.js)
+- Ubah path impor target dari `../dist/index.js` menjadi `../dist/bin/imgix.js`.
+
+#### [MODIFY] [tsup.config.ts](../../../tsup.config.ts)
+- Sesuaikan entrypoint kompilasi ke `src/bin/imgix.ts` dengan opsi mempertahankan struktur direktori atau menghasilkan bundle mandiri ke `dist/bin/imgix.js`.
 
 ---
 
-### Implementasi Perintah CLI
+### 3. Implementasi Perintah CLI Baru
 
 #### [NEW] [src/cmd/source.ts](../../../src/cmd/source.ts)
 - Implementasikan sub-perintah `source list` dan `source info <source-id>` menggunakan tata letak estetika Clack.
@@ -58,8 +74,7 @@ Rencana ini bertujuan untuk merealisasikan ide-ide eskalasi dari `ide_eskalasi_c
 #### [NEW] [src/cmd/usage.ts](../../../src/cmd/usage.ts)
 - Implementasikan sub-perintah `usage status` untuk menampilkan grafik penggunaan bandwidth dan rendering request.
 
-#### [MODIFY] [src/index.ts](../../../src/index.ts)
-- Daftarkan grup perintah kustom baru (`source`, `assets`, `url`, `diagnose`, `usage`) ke dalam parser Commander utama.
+---
 
 ### Struktur Direktori Proyek Terpadu (Pola Modular)
 
@@ -68,15 +83,20 @@ Berikut adalah ilustrasi tata letak folder pengembangan (*development*) dan hasi
 ```
 imgix-cli-unofficial/
 ├── bin/                       # Skrip eksekusi terkompilasi (npm link entrypoint)
-│   └── imgix.js               # Wrapper tipis shebang menuju dist/index.js
+│   └── imgix.js               # Wrapper tipis shebang menuju dist/bin/imgix.js
 ├── dist/                      # Direktori hasil build (JS terkompilasi)
-│   └── index.js
+│   └── bin/
+│       └── imgix.js
 ├── src/                       # Source code utama (TypeScript)
-│   ├── index.ts               # Entry point utama parser CLI (Commander)
-│   ├── config.ts              # Parser parameter & prioritas konfigurasi (CLI > ENV > Global Auth)
-│   ├── auth.ts                # Manajemen penyimpanan berkas kredensial global (~/.imgix-auth.json)
-│   ├── api.ts                 # Manajemen pemanggilan REST API imgix
-│   ├── utils.ts               # Pembantu pembatasan laju (delay) dan format teks
+│   ├── bin/                   # Entry point utama parser CLI (Commander)
+│   │   └── imgix.ts
+│   ├── pkg/                   # SDK / Modul inti yang independen & reusable
+│   │   ├── api.ts             # Manajemen pemanggilan REST API imgix
+│   │   ├── auth.ts            # Manajemen penyimpanan berkas kredensial global (~/.imgix-auth.json)
+│   │   └── config.ts          # Parser parameter & prioritas konfigurasi (CLI > ENV > Global Auth)
+│   ├── internal/              # Komponen khusus internal CLI
+│   │   └── utils/
+│   │       └── helper.ts      # Pembantu pembatasan laju (delay) dan format teks
 │   └── cmd/                   # Implementasi sub-perintah
 │       ├── auth.ts            # Manajemen autentikasi (setup, status, clear)
 │       ├── purge.ts           # Logika pembersihan cache (purge --all)
@@ -92,11 +112,12 @@ imgix-cli-unofficial/
 
 ---
 
-
 ## Rencana Verifikasi
 
 ### Pengujian Otomatis
-- Buat berkas tes unit baru `e2e/commands.test.ts` untuk memvalidasi pemanggilan baris perintah baru dan asersi kelancaran argumen.
+- Jalankan tipe pemeriksaan TypeScript: `pnpm run types:check`
+- Jalankan proses build proyek: `pnpm run build`
+- Jalankan tes E2E untuk memvalidasi fungsionalitas CLI: `pnpm run test:e2e`
 
 ### Verifikasi Manual
 - Jalankan `imgix source list` dan pastikan data terunduh dengan benar.
