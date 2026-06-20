@@ -79,6 +79,28 @@ We will relocate source files to the modular layout:
 
 ---
 
+### 4. End-to-End (E2E) Testing
+
+#### [NEW] [e2e/auth.test.ts](../../../e2e/auth.test.ts)
+- Create a new E2E test scenario file to validate the `imgix auth` command group (setup, status, clear).
+
+#### [NEW] [e2e/source.test.ts](../../../e2e/source.test.ts)
+- Create a new E2E test scenario file to validate the `imgix source` command group (list, info).
+
+#### [NEW] [e2e/assets.test.ts](../../../e2e/assets.test.ts)
+- Create a new E2E test scenario file to validate the `imgix assets` command group (list, inspect).
+
+#### [NEW] [e2e/url.test.ts](../../../e2e/url.test.ts)
+- Create a new E2E test scenario file to validate the `imgix url` command group (sign, optimize).
+
+#### [NEW] [e2e/diagnose.test.ts](../../../e2e/diagnose.test.ts)
+- Create a new E2E test scenario file to validate the `imgix diagnose` command.
+
+#### [NEW] [e2e/usage.test.ts](../../../e2e/usage.test.ts)
+- Create a new E2E test scenario file to validate the `imgix usage` command.
+
+---
+
 ### Unified Project Directory Structure (Modular Pattern)
 
 Here is the illustration of the development layout and build output directory structure to support all the commands above:
@@ -90,6 +112,14 @@ imgix-cli-unofficial/
 ├── dist/                      # Build output directory (compiled JS)
 │   └── bin/
 │       └── imgix.js
+├── e2e/                       # End-to-End (E2E) Test Scenarios
+│   ├── auth.test.ts           # Authentication command tests
+│   ├── purge.test.ts          # Cache purging command tests
+│   ├── source.test.ts         # Source command tests
+│   ├── assets.test.ts         # Assets command tests
+│   ├── url.test.ts            # URL utilities command tests
+│   ├── diagnose.test.ts       # CDN cache header diagnostics tests
+│   └── usage.test.ts          # Usage metrics command tests
 ├── src/                       # Main source code (TypeScript)
 │   ├── bin/                   # Entry point utama parser CLI (Commander)
 │   │   └── imgix.ts

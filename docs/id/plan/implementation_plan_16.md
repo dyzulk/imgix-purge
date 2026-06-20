@@ -79,6 +79,28 @@ Kita akan memindahkan berkas sumber ke tata letak modular:
 
 ---
 
+### 4. Pengujian End-to-End (E2E)
+
+#### [NEW] [e2e/auth.test.ts](../../../e2e/auth.test.ts)
+- Membuat berkas skenario pengujian E2E untuk memvalidasi perintah `imgix auth` (setup, status, clear).
+
+#### [NEW] [e2e/source.test.ts](../../../e2e/source.test.ts)
+- Membuat berkas skenario pengujian E2E untuk memvalidasi perintah `imgix source` (list, info).
+
+#### [NEW] [e2e/assets.test.ts](../../../e2e/assets.test.ts)
+- Membuat berkas skenario pengujian E2E untuk memvalidasi perintah `imgix assets` (list, inspect).
+
+#### [NEW] [e2e/url.test.ts](../../../e2e/url.test.ts)
+- Membuat berkas skenario pengujian E2E untuk memvalidasi perintah `imgix url` (sign, optimize).
+
+#### [NEW] [e2e/diagnose.test.ts](../../../e2e/diagnose.test.ts)
+- Membuat berkas skenario pengujian E2E untuk memvalidasi perintah `imgix diagnose`.
+
+#### [NEW] [e2e/usage.test.ts](../../../e2e/usage.test.ts)
+- Membuat berkas skenario pengujian E2E untuk memvalidasi perintah `imgix usage`.
+
+---
+
 ### Struktur Direktori Proyek Terpadu (Pola Modular)
 
 Berikut adalah ilustrasi tata letak folder pengembangan (*development*) dan hasil kompilasi (*build*) untuk mendukung seluruh perintah di atas:
@@ -90,6 +112,14 @@ imgix-cli-unofficial/
 ├── dist/                      # Direktori hasil build (JS terkompilasi)
 │   └── bin/
 │       └── imgix.js
+├── e2e/                       # Skenario Pengujian End-to-End (E2E)
+│   ├── auth.test.ts           # Pengujian untuk perintah auth
+│   ├── purge.test.ts          # Pengujian untuk perintah purge
+│   ├── source.test.ts         # Pengujian untuk perintah source
+│   ├── assets.test.ts         # Pengujian untuk perintah assets
+│   ├── url.test.ts            # Pengujian untuk perintah url
+│   ├── diagnose.test.ts       # Pengujian untuk perintah diagnose
+│   └── usage.test.ts          # Pengujian untuk perintah usage
 ├── src/                       # Source code utama (TypeScript)
 │   ├── bin/                   # Entry point utama parser CLI (Commander)
 │   │   └── imgix.ts
