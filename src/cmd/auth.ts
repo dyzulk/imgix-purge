@@ -4,7 +4,7 @@ import { ui } from '../internal/ui/prompts.js';
 
 export async function runAuthSetup() {
   ui.intro('imgix CLI Authentication Setup');
-  ui.log.info('You can find your API Key, Source ID, and Secure URL Token in the imgix dashboard.');
+  ui.log.info('You can find your Management API Key in your imgix dashboard.');
 
   const apiKey = await ui.text({
     message: 'Enter your imgix Management API Key (e.g. ak_...):',
@@ -18,33 +18,8 @@ export async function runAuthSetup() {
     process.exit(0);
   }
 
-  const sourceId = await ui.text({
-    message: 'Enter your imgix Source ID (e.g. 5ed5...):',
-    validate: (value) => {
-      if (!value || value.trim().length === 0) return 'Source ID is required.';
-    },
-  });
-
-  if (ui.isCancel(sourceId)) {
-    ui.cancel('Setup cancelled.');
-    process.exit(0);
-  }
-
-  const secureToken = await ui.text({
-    message: 'Enter your imgix Secure URL Token (optional, press Enter to skip):',
-  });
-
-  if (ui.isCancel(secureToken)) {
-    ui.cancel('Setup cancelled.');
-    process.exit(0);
-  }
-
-  const cleanToken = (secureToken as string || '').trim();
-
   setGlobalAuth({
     apiKey: (apiKey as string).trim(),
-    sourceId: (sourceId as string).trim(),
-    secureToken: cleanToken ? cleanToken : undefined,
   });
   
   ui.outro(pc.green('✔ Credentials successfully saved globally!\n') + 
@@ -60,15 +35,8 @@ export async function runAuthStatus() {
       ? `${auth.apiKey.substring(0, 4)}••••••••${auth.apiKey.substring(auth.apiKey.length - 4)}`
       : '••••••••';
     
-    let tokenStatus = pc.dim('Not configured');
-    if (auth.secureToken) {
-      tokenStatus = auth.secureToken.length > 6
-        ? pc.cyan(`${auth.secureToken.substring(0, 2)}••••••••${auth.secureToken.substring(auth.secureToken.length - 2)}`)
-        : pc.cyan('••••••••');
-    }
-    
     ui.note(
-      `Source ID:    ${pc.cyan(auth.sourceId)}\nAPI Key:      ${pc.cyan(maskedKey)}\nSecure Token: ${tokenStatus}\n\n${pc.dim('Saved in: ~/.imgix-auth.json')}`,
+      `API Key:      ${pc.cyan(maskedKey)}\n\n${pc.dim('Saved in: ~/.imgix-auth.json')}`,
       pc.green('✔ Logged in')
     );
     ui.outro('You are ready to manage imgix assets!');

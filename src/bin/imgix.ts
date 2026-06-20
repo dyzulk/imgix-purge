@@ -21,17 +21,12 @@ program
   .configureOutput({
     writeOut: (str) => {
       let output = str;
-      output = output.replace('  --api-key', '\n  [ Configuration & Targeting ]\n  --api-key');
       output = output.replace('  -d, --dry-run', '\n  [ Execution Modes ]\n  -d, --dry-run');
       output = output.replace('  -V, --version', '\n  [ System Options ]\n  -V, --version');
       process.stdout.write(output);
     }
   })
-  // --- Configuration & Targeting ---
-  .option('--api-key <key>', 'Your imgix Management API Key (overrides IMGIX_API_KEY env)')
-  .option('--source-id <id>', 'Your imgix Source ID (overrides IMGIX_SOURCE_ID env)')
-  .option('--secure-token <token>', 'Your imgix Secure URL Token (overrides IMGIX_SECURE_TOKEN env)')
-  .option('--domain <dom>', 'Specify target domain(s) manually (comma-separated)')
+  // --- Execution & Tuning ---
   .option('--batch-size <num>', 'Number of assets to purge in each API call (default: 10000)', parseInt)
   
   // --- Execution Modes ---
@@ -39,25 +34,12 @@ program
   
   // --- System Options ---
   .version('1.0.0', '-V, --version', 'Output the version number')
-  .helpOption('-h, --help', 'Display help for command')
-  .addHelpText('after', `
-Environment Variables:
-  - IMGIX_API_KEY      Your imgix Management API Key (e.g. ak_...)
-  - IMGIX_SOURCE_ID    Your imgix Source ID (e.g. 5ed5...)
-
-  Optional:
-  - IMGIX_SECURE_TOKEN  Your imgix Secure URL Token (e.g. 1a2b...)
-  - IMGIX_DOMAINS       Comma-separated list of domains to skip auto-detection (requires 'Sources' permission)
-`);
+  .helpOption('-h, --help', 'Display help for command');
 
 program.hook('preAction', (thisCommand, actionCommand) => {
   const globalOpts = program.opts();
-  if (globalOpts.apiKey) config.apiKey = globalOpts.apiKey;
-  if (globalOpts.sourceId) config.sourceId = globalOpts.sourceId;
-  if (globalOpts.secureToken) config.secureToken = globalOpts.secureToken;
   if (globalOpts.dryRun) config.dryRun = globalOpts.dryRun;
   if (globalOpts.batchSize && !isNaN(globalOpts.batchSize)) config.batchSize = globalOpts.batchSize;
-  if (globalOpts.domain) config.domains = globalOpts.domain.split(',').map((d: string) => d.trim());
 });
 
 // Register the purge command
