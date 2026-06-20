@@ -2,6 +2,11 @@
 import { Command } from 'commander';
 import { runPurge } from '../cmd/index.js';
 import { runAuthSetup, runAuthStatus, runAuthClear } from '../cmd/auth.js';
+import { runSourceList, runSourceInfo } from '../cmd/source.js';
+import { runAssetsList, runAssetsInspect } from '../cmd/assets.js';
+import { runUrlSign, runUrlOptimize } from '../cmd/url.js';
+import { runDiagnose } from '../cmd/diagnose.js';
+import { runUsageStatus } from '../cmd/usage.js';
 import { config } from '../pkg/config.js';
 
 const program = new Command();
@@ -90,6 +95,89 @@ authCmd
   .description('Delete your saved global credentials')
   .action(async () => {
     await runAuthClear();
+  });
+
+// Register the source command group
+const sourceCmd = program
+  .command('source')
+  .description('Manage and retrieve info about imgix Sources')
+  .addHelpCommand(false);
+
+sourceCmd
+  .command('list')
+  .description('List all sources associated with the API key')
+  .action(async () => {
+    await runSourceList();
+  });
+
+sourceCmd
+  .command('info [source-id]')
+  .description('Get detailed configuration of a specific source')
+  .action(async (sourceId) => {
+    await runSourceInfo(sourceId);
+  });
+
+// Register the assets command group
+const assetsCmd = program
+  .command('assets')
+  .description('Explore and inspect assets within the imgix Source')
+  .addHelpCommand(false);
+
+assetsCmd
+  .command('list')
+  .description('List files in the active Source (paginated)')
+  .option('--cursor <cursor>', 'Cursor for next page')
+  .action(async (opts) => {
+    await runAssetsList(opts);
+  });
+
+assetsCmd
+  .command('inspect <path>')
+  .description('Retrieve properties of a file')
+  .option('-a, --api', 'Query Management API metadata instead of public render properties')
+  .action(async (path, opts) => {
+    await runAssetsInspect(path, opts);
+  });
+
+// Register the url command group
+const urlCmd = program
+  .command('url')
+  .description('Generate signed URLs or analyze query parameters')
+  .addHelpCommand(false);
+
+urlCmd
+  .command('sign <path> [params]')
+  .description('Sign a path and optional parameters locally')
+  .action(async (path, params) => {
+    await runUrlSign(path, params);
+  });
+
+urlCmd
+  .command('optimize <url>')
+  .description('Recommend performance optimization parameters for a URL')
+  .action(async (url) => {
+    await runUrlOptimize(url);
+  });
+
+// Register the diagnose command
+program
+  .command('diagnose <url>')
+  .description('Analyze CDN cache and compression headers for a given URL')
+  .action(async (url) => {
+    await runDiagnose(url);
+  });
+
+// Register the usage command group
+const usageCmd = program
+  .command('usage')
+  .description('Check bandwidth and usage metrics')
+  .addHelpCommand(false);
+
+usageCmd
+  .command('status')
+  .description('Display recent credit consumption reports')
+  .action(async () => {
+    await runUsageStatus();
   });
 
 if (!process.argv.slice(2).length) {
