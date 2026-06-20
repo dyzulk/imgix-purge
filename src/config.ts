@@ -4,14 +4,12 @@ export interface Config {
   domains: string[];
   execute: boolean;
   dryRun: boolean;
-  help: boolean;
 }
 
 const apiKey = process.env.IMGIX_API_KEY || '';
 const sourceId = process.env.IMGIX_SOURCE_ID || '';
 
 const args = process.argv.slice(2);
-const help = args.includes('--help') || args.includes('-h');
 const dryRun = args.includes('--dry-run') || args.includes('-d');
 const execute = !dryRun;
 
@@ -34,32 +32,8 @@ export const config: Config = {
   domains,
   execute,
   dryRun,
-  help,
 };
 
-export function showHelp(): void {
-  console.log(`
-Usage: imgix-purge [options]
-
-An automation tool to bulk purge all assets in an imgix Source cache.
-
-Options:
-  -d, --dry-run        Run in simulation mode (list assets that would be purged without calling the Purge API)
-  -h, --help           Display this help menu and exit
-  --api-key <key>      Your imgix Management API Key (overrides IMGIX_API_KEY env)
-  --source-id <id>     Your imgix Source ID (overrides IMGIX_SOURCE_ID env)
-  --domain <dom>       Specify target domain(s) manually (comma-separated) to skip auto-detection
-                       Example: --domain my-source.imgix.net,images.mycompany.com
-
-Environment Variables:
-  - IMGIX_API_KEY      Your imgix Management API Key (e.g. ak_...)
-  - IMGIX_SOURCE_ID    Your imgix Source ID (e.g. 5ed5...)
-
-  Optional:
-  - IMGIX_DOMAINS      Comma-separated list of domains to skip auto-detection (requires 'Sources' permission)
-`);
-  process.exit(0);
-}
 
 export function validateConfig(): void {
   if (!config.apiKey || !config.sourceId) {
