@@ -1,9 +1,3 @@
-import dotenv from 'dotenv';
-import path from 'path';
-
-// Load environment variables from .env.local
-dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
-
 export interface Config {
   apiKey: string;
   sourceId: string;
@@ -45,18 +39,19 @@ export const config: Config = {
 
 export function showHelp(): void {
   console.log(`
-Usage: pnpm purge [options]
+Usage: imgix-purge [options]
 
 An automation tool to bulk purge all assets in an imgix Source cache.
 
 Options:
   -d, --dry-run        Run in simulation mode (list assets that would be purged without calling the Purge API)
   -h, --help           Display this help menu and exit
-  --domain, -dom <dom> Specify target domain(s) manually (comma-separated) to skip auto-detection
+  --api-key <key>      Your imgix Management API Key (overrides IMGIX_API_KEY env)
+  --source-id <id>     Your imgix Source ID (overrides IMGIX_SOURCE_ID env)
+  --domain <dom>       Specify target domain(s) manually (comma-separated) to skip auto-detection
                        Example: --domain my-source.imgix.net,images.mycompany.com
 
 Environment Variables:
-  The following variables must be defined in your .env.local file:
   - IMGIX_API_KEY      Your imgix Management API Key (e.g. ak_...)
   - IMGIX_SOURCE_ID    Your imgix Source ID (e.g. 5ed5...)
 
@@ -68,8 +63,9 @@ Environment Variables:
 
 export function validateConfig(): void {
   if (!config.apiKey || !config.sourceId) {
-    console.error('Error: Please define IMGIX_API_KEY and IMGIX_SOURCE_ID in your .env.local file.');
-    console.error('Run "pnpm purge --help" for more details.');
+    console.error('Error: Missing API Key or Source ID.');
+    console.error('Please provide them via --api-key and --source-id flags, or by setting the IMGIX_API_KEY and IMGIX_SOURCE_ID environment variables.');
+    console.error('Run "imgix-purge --help" for more details.');
     process.exit(1);
   }
 }

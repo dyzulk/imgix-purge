@@ -21,4 +21,14 @@ describe('imgix-purge e2e', () => {
     assert.match(stdout, /1\.0\.0/);
     assert.equal(stderr, '');
   });
+
+  it('should fail cleanly if API key or source ID is missing', async () => {
+    try {
+      // Pass an empty environment to ensure no env variables leak in
+      await execAsync(`node ./bin/imgix-purge.js`, { env: {} });
+      assert.fail('Should have failed');
+    } catch (error: any) {
+      assert.match(error.stderr || error.stdout, /Error: Missing API Key or Source ID/);
+    }
+  });
 });
