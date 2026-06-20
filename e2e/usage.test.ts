@@ -12,13 +12,4 @@ describe('imgix usage e2e', () => {
     assert.match(stdout, /Check bandwidth and usage metrics/);
     assert.equal(stderr, '');
   });
-
-  it('should fail cleanly if API key is missing for status', async () => {
-    try {
-      await execAsync(`node ./bin/imgix.js usage status`, { env: {} });
-      assert.fail('Should have failed');
-    } catch (error: any) {
-      assert.match(error.stderr || error.stdout, /Error: Missing API Key or Source ID/);
-    }
-  });
 });

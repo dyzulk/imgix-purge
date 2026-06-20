@@ -1,27 +1,43 @@
 import pc from 'picocolors';
 import { ui } from '../internal/ui/prompts.js';
 
-export async function runDiagnose(urlStr: string) {
-  try {
-    new URL(urlStr);
-  } catch (error: any) {
-    ui.log.error(`Invalid URL provided: ${error.message || error}`);
-    process.exit(1);
+export async function runDiagnose(urlStr?: string) {
+  let targetUrl = (urlStr || '').trim();
+  
+  if (!targetUrl) {
+    const inputUrl = await ui.text({
+      message: 'Enter target imgix image URL to diagnose:',
+      validate: (val) => {
+        if (!val || val.trim().length === 0) return 'URL is required.';
+        try {
+          new URL(val);
+        } catch {
+          return 'Please enter a valid absolute URL.';
+        }
+      }
+    });
+    
+    if (ui.isCancel(inputUrl)) {
+      ui.cancel('Diagnostics cancelled.');
+      process.exit(0);
+    }
+    
+    targetUrl = (inputUrl as string).trim();
   }
   
   const s = ui.spinner();
-  s.start(`Running diagnostics on ${urlStr}...`);
+  s.start(`Running diagnostics on ${targetUrl}...`);
   
   try {
-    let response = await fetch(urlStr, { method: 'HEAD' });
+    let response = await fetch(targetUrl, { method: 'HEAD' });
     
     if (response.status === 405 || response.status === 403 || response.status === 404) {
-      response = await fetch(urlStr, { method: 'GET' });
+      response = await fetch(targetUrl, { method: 'GET' });
     }
     
     s.stop('Diagnostics complete');
     
-    ui.intro(`Diagnostic Report: ${urlStr}`);
+    ui.intro(`Diagnostic Report: ${targetUrl}`);
     
     const headers = response.headers;
     const status = response.status;

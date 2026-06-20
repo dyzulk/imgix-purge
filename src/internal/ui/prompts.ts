@@ -19,6 +19,7 @@ export const ui = {
   text: p.text,
   confirm: p.confirm,
   select: p.select,
+  multiselect: p.multiselect,
   password: p.password,
   spinner: p.spinner,
   note: p.note,

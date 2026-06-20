@@ -1,10 +1,11 @@
 import pc from 'picocolors';
 import { fetchSources, fetchSourceDetail } from '../pkg/api.js';
+import { resolveSingleTargetSource } from '../internal/utils/resolver.js';
 import { config, validateConfig } from '../pkg/config.js';
 import { ui } from '../internal/ui/prompts.js';
 
 export async function runSourceList() {
-  validateConfig();
+  await validateConfig();
   
   const s = ui.spinner();
   s.start('Fetching sources...');
@@ -39,14 +40,19 @@ export async function runSourceList() {
 }
 
 export async function runSourceInfo(sourceId?: string) {
-  const targetId = sourceId || config.sourceId;
+  await validateConfig();
+  
+  let targetId = (sourceId || '').trim();
   
   if (!targetId) {
-    ui.log.error('Error: Source ID is required. Please provide it as an argument or configure it.');
-    process.exit(1);
+    // Dynamically resolve target source using single selector
+    const src = await resolveSingleTargetSource(config.apiKey);
+    if (src.id === 'manual') {
+      ui.log.error('Cannot query details for a manual domain target.');
+      process.exit(1);
+    }
+    targetId = src.id;
   }
-  
-  validateConfig();
   
   const s = ui.spinner();
   s.start(`Fetching details for source ${targetId}...`);

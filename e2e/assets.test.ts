@@ -12,22 +12,4 @@ describe('imgix assets e2e', () => {
     assert.match(stdout, /Explore and inspect assets within the imgix Source/);
     assert.equal(stderr, '');
   });
-
-  it('should fail cleanly if API key is missing for list', async () => {
-    try {
-      await execAsync(`node ./bin/imgix.js assets list`, { env: {} });
-      assert.fail('Should have failed');
-    } catch (error: any) {
-      assert.match(error.stderr || error.stdout, /Error: Missing API Key or Source ID/);
-    }
-  });
-
-  it('should fail cleanly if API key is missing for inspect', async () => {
-    try {
-      await execAsync(`node ./bin/imgix.js assets inspect image.jpg`, { env: {} });
-      assert.fail('Should have failed');
-    } catch (error: any) {
-      assert.match(error.stderr || error.stdout, /Error: Missing API Key or Source ID/);
-    }
-  });
 });

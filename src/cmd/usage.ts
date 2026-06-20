@@ -4,7 +4,7 @@ import { config, validateConfig } from '../pkg/config.js';
 import { ui } from '../internal/ui/prompts.js';
 
 export async function runUsageStatus() {
-  validateConfig();
+  await validateConfig();
   
   const s = ui.spinner();
   s.start('Fetching usage reports...');

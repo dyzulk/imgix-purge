@@ -1,6 +1,6 @@
 import pc from 'picocolors';
 import crypto from 'node:crypto';
-import { fetchSourceDomains } from '../pkg/api.js';
+import { resolveTargetSources } from '../internal/utils/resolver.js';
 import { config, validateConfig } from '../pkg/config.js';
 import { ui } from '../internal/ui/prompts.js';
 
@@ -10,60 +10,93 @@ function signPath(path: string, params: string, secureToken: string): string {
   return crypto.createHash('md5').update(toSign).digest('hex');
 }
 
-export async function runUrlSign(pathArg: string, paramsArg?: string) {
-  validateConfig();
+export async function runUrlSign(pathArg?: string, paramsArg?: string) {
+  await validateConfig();
   
-  if (!config.secureToken) {
-    ui.log.error('Error: Secure URL Token is required for signing.');
-    ui.log.info('Please run "imgix auth setup" to configure your Secure URL Token globally,');
-    ui.log.info('or provide it via the --secure-token CLI flag / IMGIX_SECURE_TOKEN environment variable.');
-    process.exit(1);
-  }
+  ui.intro('imgix URL Signer');
   
-  const cleanPath = pathArg.startsWith('/') ? pathArg : `/${pathArg}`;
-  let params = (paramsArg || '').trim();
-  if (params && !params.startsWith('?')) {
-    params = `?${params}`;
-  }
-  
-  const s = ui.spinner();
-  s.start('Detecting target domains...');
-  
-  try {
-    let domains: string[] = [];
-    if (config.domains.length > 0) {
-      domains = config.domains;
-    } else {
-      domains = await fetchSourceDomains(config.apiKey, config.sourceId);
-    }
-    s.stop('Domains resolved');
-    
-    if (domains.length === 0) {
-      ui.log.error('Error: No domains found. Please specify target domains manually using --domain.');
-      process.exit(1);
-    }
-    
-    const signature = signPath(cleanPath, params, config.secureToken);
-    const separator = params ? '&' : '?';
-    
-    ui.intro('Signed imgix URLs');
-    
-    const lines = domains.map((domain) => {
-      return `https://${domain}${cleanPath}${params}${separator}s=${signature}`;
+  let targetPath = (pathArg || '').trim();
+  if (!targetPath) {
+    const inputPath = await ui.text({
+      message: 'Enter asset path (e.g. /images/logo.png):',
+      validate: (val) => {
+        if (!val || val.trim().length === 0) return 'Path is required.';
+      }
     });
     
-    ui.note(lines.join('\n'), 'Generated signed URLs');
-    ui.outro('These URLs are secure and tamper-proof.');
-  } catch (error: any) {
-    s.stop('Failed to generate signed URLs');
-    ui.log.error(error.message || error);
-    process.exit(1);
+    if (ui.isCancel(inputPath)) {
+      ui.cancel('Signing cancelled.');
+      process.exit(0);
+    }
+    targetPath = (inputPath as string).trim();
   }
+  
+  let targetParams = (paramsArg || '').trim();
+  if (!pathArg && !paramsArg) {
+    const inputParams = await ui.text({
+      message: 'Enter query parameters (optional, e.g. w=400&h=300):'
+    });
+    
+    if (ui.isCancel(inputParams)) {
+      ui.cancel('Signing cancelled.');
+      process.exit(0);
+    }
+    targetParams = (inputParams as string).trim();
+  }
+  
+  const cleanPath = targetPath.startsWith('/') ? targetPath : `/${targetPath}`;
+  if (targetParams && !targetParams.startsWith('?')) {
+    targetParams = `?${targetParams}`;
+  }
+  
+  const selectedSources = await resolveTargetSources(config.apiKey);
+  
+  const results: string[] = [];
+  
+  for (const src of selectedSources) {
+    const separator = targetParams ? '&' : '?';
+    
+    if (src.secureToken) {
+      const signature = signPath(cleanPath, targetParams, src.secureToken);
+      for (const domain of src.domains) {
+        results.push(`${pc.bold(src.name)}:\n  https://${domain}${cleanPath}${targetParams}${separator}s=${signature}`);
+      }
+    } else {
+      for (const domain of src.domains) {
+        results.push(`${pc.bold(src.name)} ${pc.yellow('(Warning: No Secure Token)')}:\n  https://${domain}${cleanPath}${targetParams}`);
+      }
+    }
+  }
+  
+  ui.intro('Signed imgix URLs');
+  ui.note(results.join('\n\n'), 'Generated URLs');
+  ui.outro('URL signing complete.');
 }
 
-export async function runUrlOptimize(urlStr: string) {
+export async function runUrlOptimize(urlStr?: string) {
+  let targetUrl = (urlStr || '').trim();
+  if (!targetUrl) {
+    const inputUrl = await ui.text({
+      message: 'Enter the full imgix image URL to optimize:',
+      validate: (val) => {
+        if (!val || val.trim().length === 0) return 'URL is required.';
+        try {
+          new URL(val);
+        } catch {
+          return 'Please enter a valid absolute URL.';
+        }
+      }
+    });
+    
+    if (ui.isCancel(inputUrl)) {
+      ui.cancel('Optimization cancelled.');
+      process.exit(0);
+    }
+    targetUrl = (inputUrl as string).trim();
+  }
+  
   try {
-    const parsedUrl = new URL(urlStr);
+    const parsedUrl = new URL(targetUrl);
     
     ui.intro('imgix URL Optimization Analysis');
     
@@ -99,10 +132,10 @@ export async function runUrlOptimize(urlStr: string) {
       recommendation += `- Warning: This URL was already signed. Modifying parameters will invalidate the signature unless resigned.\n`;
     }
     
-    const optimizedUrl = new URL(urlStr);
+    const optimizedUrl = new URL(targetUrl);
     optimizedUrl.search = newParams.toString();
     
-    let noteText = `Original URL:  ${pc.dim(urlStr)}\n\n`;
+    let noteText = `Original URL:  ${pc.dim(targetUrl)}\n\n`;
     if (recommendation) {
       noteText += `${pc.green('Recommendations:')}\n${recommendation}\n`;
       noteText += `Optimized URL: ${pc.cyan(optimizedUrl.toString())}`;
@@ -111,7 +144,7 @@ export async function runUrlOptimize(urlStr: string) {
     }
     
     ui.note(noteText, 'Analysis Results');
-    ui.outro('Keep learning about imgix URL parameters to maximize image performance.');
+    ui.outro('Optimization analysis complete.');
   } catch (error: any) {
     ui.log.error(`Invalid URL provided: ${error.message || error}`);
     process.exit(1);

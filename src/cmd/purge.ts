@@ -1,118 +1,143 @@
+import pc from 'picocolors';
 import { config, validateConfig } from '../pkg/config.js';
 import { delay, normalizePath } from '../internal/utils/helper.js';
-import { fetchSourceDomains, fetchAssetsPage, submitPurgeRequest } from '../pkg/api.js';
+import { fetchAssetsPage, submitPurgeRequest } from '../pkg/api.js';
+import { resolveTargetSources } from '../internal/utils/resolver.js';
+import { ui } from '../internal/ui/prompts.js';
 
 export async function runPurge() {
-  console.log('--- imgix Bulk Purge Tool ---');
-  if (config.dryRun) {
-    console.log('Mode: DRY-RUN (no changes will be made).');
-    console.log('To execute the purge, run the command without the --dry-run flag.');
-  } else {
-    console.log('Mode: EXECUTE (purge requests will be sent).');
+  await validateConfig();
+  
+  ui.intro('imgix Purge Tool');
+  
+  const selectedSources = await resolveTargetSources(config.apiKey);
+  
+  const purgeMode = await ui.select({
+    message: 'Select Purge Mode:',
+    options: [
+      { value: 'bulk', label: 'Bulk Purge (Purge all assets inside the Source cache)' },
+      { value: 'selective', label: 'Selective Purge (Purge specific file paths)' }
+    ]
+  });
+  
+  if (ui.isCancel(purgeMode)) {
+    ui.cancel('Purge cancelled.');
+    process.exit(0);
   }
-  console.log('------------------------------');
-
-  // Validate environment variables
-  validateConfig();
-
-  try {
-    let domains: string[] = [];
-
-    if (config.domains.length > 0) {
-      domains = config.domains;
-      console.log(`Using manually specified domain(s): ${domains.join(', ')}`);
+  
+  let targetPaths: string[] = [];
+  
+  if (purgeMode === 'selective') {
+    const pathsInput = await ui.text({
+      message: 'Enter asset paths to purge (comma-separated, e.g. /images/logo.png, icon.svg):',
+      validate: (val) => {
+        if (!val || val.trim().length === 0) return 'At least one path is required.';
+      }
+    });
+    
+    if (ui.isCancel(pathsInput)) {
+      ui.cancel('Purge cancelled.');
+      process.exit(0);
+    }
+    
+    targetPaths = (pathsInput as string).split(',').map(p => normalizePath(p.trim())).filter(Boolean);
+  }
+  
+  const proceed = await ui.confirm({
+    message: `Are you sure you want to execute purge for ${selectedSources.length} Source(s)?`,
+    initialValue: true
+  });
+  
+  if (ui.isCancel(proceed) || !proceed) {
+    ui.cancel('Purge execution cancelled.');
+    process.exit(0);
+  }
+  
+  for (const src of selectedSources) {
+    ui.log.step(`Processing Source: ${pc.cyan(src.name)} (${src.id})`);
+    
+    let urlsToPurge: string[] = [];
+    
+    if (purgeMode === 'selective') {
+      for (const domain of src.domains) {
+        for (const path of targetPaths) {
+          urlsToPurge.push(`https://${domain}${path}`);
+        }
+      }
     } else {
+      if (src.id === 'manual') {
+        ui.log.error('Cannot run Bulk Purge on a manually configured target. Please use Selective Purge instead.');
+        continue;
+      }
+      
+      const s = ui.spinner();
+      s.start('Fetching asset list from Source...');
+      
       try {
-        domains = await fetchSourceDomains(config.apiKey, config.sourceId);
-        if (domains.length === 0) {
-          console.error('Error: No subdomains or custom domains found for this Source.');
-          process.exit(1);
-        }
-        console.log(`Target domains detected: ${domains.join(', ')}`);
-      } catch (err: any) {
-        console.error('\nFailed to automatically fetch source domains.');
-        console.error('If your API key does not have the "Sources" permission (which is normal for limited API keys),');
-        console.error('you must specify your domain(s) manually by either:');
-        console.error('  1. Adding IMGIX_DOMAINS=your-source.imgix.net in your .env.local file');
-        console.error('  2. Using the CLI flag: --domain your-source.imgix.net');
-        console.error('\nOriginal error details:');
-        console.error(err.message || err);
-        process.exit(1);
-      }
-    }
-
-    let nextUrl: string | null = `https://api.imgix.com/api/v1/sources/${config.sourceId}/assets?page[size]=100`;
-    const assetsToPurge: string[] = [];
-    let pageCount = 1;
-
-    console.log('\nFetching asset list...');
-    while (nextUrl) {
-      console.log(`Fetching page ${pageCount}...`);
-      const pageData = await fetchAssetsPage(config.apiKey, nextUrl);
-      const assets = pageData.data || [];
-
-      for (const asset of assets) {
-        let originPath = asset.attributes?.origin_path || '';
+        let nextUrl: string | null = `https://api.imgix.com/api/v1/sources/${src.id}/assets?page[size]=100`;
+        let pageCount = 1;
         
-        // Fallback to extraction from ID if origin_path attribute is not present
-        if (!originPath && asset.id.includes('/')) {
-          originPath = asset.id.substring(asset.id.indexOf('/') + 1);
-        }
-
-        if (originPath) {
-          const cleanPath = normalizePath(originPath);
-          for (const domain of domains) {
-            assetsToPurge.push(`https://${domain}${cleanPath}`);
+        while (nextUrl) {
+          s.message(`Fetching asset list page ${pageCount}...`);
+          const pageData = await fetchAssetsPage(config.apiKey, nextUrl);
+          const assets = pageData.data || [];
+          
+          for (const asset of assets) {
+            let originPath = asset.attributes?.origin_path || '';
+            if (!originPath && asset.id.includes('/')) {
+              originPath = asset.id.substring(asset.id.indexOf('/') + 1);
+            }
+            if (originPath) {
+              const cleanPath = normalizePath(originPath);
+              for (const domain of src.domains) {
+                urlsToPurge.push(`https://${domain}${cleanPath}`);
+              }
+            }
           }
+          nextUrl = pageData.links?.next || null;
+          pageCount++;
+          await delay(250);
         }
+        s.stop(`Retrieved ${urlsToPurge.length} URLs to purge`);
+      } catch (err: any) {
+        s.stop('Failed to fetch asset list');
+        ui.log.error(`Error listing assets for Source ${src.name}: ${err.message}`);
+        continue;
       }
-
-      nextUrl = pageData.links?.next || null;
-      pageCount++;
-      // Small delay between listing requests
-      await delay(250);
     }
-
-    console.log(`\nFound ${assetsToPurge.length} URLs to purge.`);
-
-    if (assetsToPurge.length === 0) {
-      console.log('No assets found to purge. Exiting.');
-      return;
+    
+    if (urlsToPurge.length === 0) {
+      ui.log.info(`No URLs resolved for Source ${src.name}. Skipping.`);
+      continue;
     }
-
+    
     if (config.dryRun) {
-      console.log('\n--- List of URLs that would be purged (Dry-run) ---');
-      assetsToPurge.forEach((url, index) => {
-        console.log(`[${index + 1}] ${url}`);
+      ui.log.info(`[ Dry-run Mode ] URLs that would be purged for Source ${src.name}:`);
+      urlsToPurge.forEach((url, i) => {
+        ui.log.message(`  [${i + 1}] ${url}`);
       });
-      console.log('\nDry-run complete. No purge requests were sent.');
-      console.log('To run this for real, execute without the --dry-run flag.');
     } else {
-      console.log('\nStarting purge process (3 requests per second to respect rate limits)...');
+      const sPurge = ui.spinner();
+      sPurge.start(`Purging ${urlsToPurge.length} URLs (3 req/sec)...`);
+      
       let successCount = 0;
       let failCount = 0;
-
-      for (let i = 0; i < assetsToPurge.length; i++) {
-        const url = assetsToPurge[i];
-        console.log(`[${i + 1}/${assetsToPurge.length}] Purging: ${url}...`);
+      
+      for (let i = 0; i < urlsToPurge.length; i++) {
+        const url = urlsToPurge[i];
+        sPurge.message(`[${i + 1}/${urlsToPurge.length}] Purging: ${url}...`);
         
         const success = await submitPurgeRequest(config.apiKey, url);
-        if (success) {
-          successCount++;
-        } else {
-          failCount++;
-        }
-
-        // Throttle to respect the rate limit (4 req/sec)
+        if (success) successCount++;
+        else failCount++;
+        
         await delay(350);
       }
-
-      console.log(`\nPurge process complete.`);
-      console.log(`Successfully queued: ${successCount}`);
-      console.log(`Failed: ${failCount}`);
+      
+      sPurge.stop(`Purge complete for ${src.name}`);
+      ui.log.success(`Queued successfully: ${successCount}, Failed: ${failCount}`);
     }
-  } catch (error) {
-    console.error('An error occurred during execution:', error);
-    process.exit(1);
   }
+  
+  ui.outro('Purge operation finished.');
 }

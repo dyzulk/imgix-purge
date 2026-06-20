@@ -11,7 +11,7 @@ describe('imgix diagnose e2e', () => {
       await execAsync(`node ./bin/imgix.js diagnose not-a-url`);
       assert.fail('Should have failed');
     } catch (error: any) {
-      assert.match(error.stderr || error.stdout, /Invalid URL/);
+      assert.match(error.stderr || error.stdout, /Failed to parse URL|Invalid URL/);
     }
   });
 });

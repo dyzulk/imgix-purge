@@ -96,6 +96,7 @@ export interface SourceListResponse {
     attributes: {
       name: string;
       enabled: boolean;
+      secure_url_token?: string;
       deployment: {
         type: string;
         imgix_subdomains?: string[];
@@ -113,6 +114,7 @@ export interface SourceDetailResponse {
     attributes: {
       name: string;
       enabled: boolean;
+      secure_url_token?: string;
       deployment: {
         type: string;
         imgix_subdomains?: string[];
