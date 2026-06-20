@@ -2,9 +2,19 @@
   "name": "imgix-purge",
   "version": "1.0.0",
   "description": "A CLI tool to bulk purge all assets in an imgix Source cache.",
-  "main": "src/purge.ts",
+  "main": "dist/index.js",
+  "bin": {
+    "imgix-purge": "./bin/imgix-purge.js"
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
   "scripts": {
-    "imgix-purge": "tsx src/purge.ts",
+    "build": "tsup",
+    "prepublishOnly": "pnpm build",
+    "imgix-purge": "node bin/imgix-purge.js",
+    "dev": "tsx src/index.ts",
     "types:check": "tsc --noEmit"
   },
   "keywords": [
@@ -38,9 +48,13 @@
     }
   },
   "type": "module",
+  "dependencies": {
+    "commander": "^15.0.0",
+    "dotenv": "^17.4.2"
+  },
   "devDependencies": {
     "@types/node": "^25.9.3",
-    "dotenv": "^17.4.2",
+    "tsup": "^8.5.1",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3"
   }

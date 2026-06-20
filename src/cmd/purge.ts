@@ -1,17 +1,12 @@
-import { config, validateConfig, showHelp } from './config.js';
-import { delay, normalizePath } from './utils.js';
-import { fetchSourceDomains, fetchAssetsPage, submitPurgeRequest } from './api.js';
+import { config, validateConfig } from '../config.js';
+import { delay, normalizePath } from '../utils.js';
+import { fetchSourceDomains, fetchAssetsPage, submitPurgeRequest } from '../api.js';
 
-async function main() {
-  // Show help menu first if requested
-  if (config.help) {
-    showHelp();
-  }
-
+export async function runPurge() {
   console.log('--- imgix Bulk Purge Tool ---');
   if (config.dryRun) {
     console.log('Mode: DRY-RUN (no changes will be made).');
-    console.log('To execute the purge, run the command without any flags.');
+    console.log('To execute the purge, run the command without the --dry-run flag.');
   } else {
     console.log('Mode: EXECUTE (purge requests will be sent).');
   }
@@ -21,14 +16,30 @@ async function main() {
   validateConfig();
 
   try {
-    const domains = await fetchSourceDomains(config.apiKey, config.sourceId);
+    let domains: string[] = [];
 
-    if (domains.length === 0) {
-      console.error('Error: No subdomains or custom domains found for this Source.');
-      process.exit(1);
+    if (config.domains.length > 0) {
+      domains = config.domains;
+      console.log(`Using manually specified domain(s): ${domains.join(', ')}`);
+    } else {
+      try {
+        domains = await fetchSourceDomains(config.apiKey, config.sourceId);
+        if (domains.length === 0) {
+          console.error('Error: No subdomains or custom domains found for this Source.');
+          process.exit(1);
+        }
+        console.log(`Target domains detected: ${domains.join(', ')}`);
+      } catch (err: any) {
+        console.error('\nFailed to automatically fetch source domains.');
+        console.error('If your API key does not have the "Sources" permission (which is normal for limited API keys),');
+        console.error('you must specify your domain(s) manually by either:');
+        console.error('  1. Adding IMGIX_DOMAINS=your-source.imgix.net in your .env.local file');
+        console.error('  2. Using the CLI flag: --domain your-source.imgix.net');
+        console.error('\nOriginal error details:');
+        console.error(err.message || err);
+        process.exit(1);
+      }
     }
-
-    console.log(`Target domains detected: ${domains.join(', ')}`);
 
     let nextUrl: string | null = `https://api.imgix.com/api/v1/sources/${config.sourceId}/assets?page[size]=100`;
     const assetsToPurge: string[] = [];
@@ -75,7 +86,7 @@ async function main() {
         console.log(`[${index + 1}] ${url}`);
       });
       console.log('\nDry-run complete. No purge requests were sent.');
-      console.log('To run this for real, execute with: pnpm purge');
+      console.log('To run this for real, execute without the --dry-run flag.');
     } else {
       console.log('\nStarting purge process (3 requests per second to respect rate limits)...');
       let successCount = 0;
@@ -105,5 +116,3 @@ async function main() {
     process.exit(1);
   }
 }
-
-main();
