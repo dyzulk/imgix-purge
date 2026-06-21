@@ -7,6 +7,7 @@ import { runAssetsList, runAssetsInspect } from '../cmd/assets.js';
 import { runUrlSign, runUrlOptimize } from '../cmd/url.js';
 import { runDiagnose } from '../cmd/diagnose.js';
 import { runUsageStatus } from '../cmd/usage.js';
+import { runSelfUpdate } from '../cmd/update.js';
 import { config } from '../pkg/config.js';
 
 declare const __VERSION__: string;
@@ -162,6 +163,15 @@ usageCmd
   .description('Display recent credit consumption reports')
   .action(async () => {
     await runUsageStatus();
+  });
+
+// Register the self-update command
+program
+  .command('update')
+  .alias('self-update')
+  .description('Check for updates and update the CLI')
+  .action(async () => {
+    await runSelfUpdate(__VERSION__);
   });
 
 if (!process.argv.slice(2).length) {
