@@ -2,8 +2,12 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert';
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
+import fs from 'node:fs';
 
 const execAsync = promisify(exec);
+
+const pkg = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf-8'));
+const version = pkg.version;
 
 describe('imgix e2e', () => {
   it('should print help text when invoked with no arguments', async () => {
@@ -22,7 +26,7 @@ describe('imgix e2e', () => {
 
   it('should print version when --version is passed', async () => {
     const { stdout, stderr } = await execAsync(`node ./bin/imgix.js --version`);
-    assert.match(stdout, /1\.0\.0/);
+    assert.match(stdout, new RegExp(version.replace(/\./g, '\\.')));
     assert.equal(stderr, '');
   });
 });

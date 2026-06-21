@@ -102,7 +102,7 @@ These options apply across all commands or tune execution behavior:
 | :--- | :--- | :--- | :--- |
 | `-d, --dry-run` | Boolean | `false` | Runs commands (especially `purge`) in simulation mode. Lists targeted URLs without sending API mutations. |
 | `--batch-size <num>` | Integer | `10000` | Sets the page size limit when retrieving assets from the API. |
-| `-V, --version` | None | - | Outputs the version number of the installed CLI (`1.0.0`). |
+| `-V, --version` | None | - | Outputs the version number of the installed CLI. |
 | `-h, --help` | None | - | Displays the CLI help guide and lists all commands or specific flags. |
 
 </details>

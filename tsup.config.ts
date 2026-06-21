@@ -1,4 +1,8 @@
 import { defineConfig } from "tsup";
+import fs from "node:fs";
+
+const pkg = JSON.parse(fs.readFileSync("./package.json", "utf-8"));
+const version = pkg.version;
 
 export default defineConfig({
   entry: {
@@ -11,5 +15,8 @@ export default defineConfig({
   dts: false,
   clean: true,
   minify: true,
-  sourcemap: false
+  sourcemap: false,
+  define: {
+    __VERSION__: JSON.stringify(version)
+  }
 });

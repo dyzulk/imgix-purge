@@ -9,6 +9,8 @@ import { runDiagnose } from '../cmd/diagnose.js';
 import { runUsageStatus } from '../cmd/usage.js';
 import { config } from '../pkg/config.js';
 
+declare const __VERSION__: string;
+
 const program = new Command();
 
 program
@@ -33,7 +35,7 @@ program
   .option('-d, --dry-run', 'Run in simulation mode (list assets that would be purged without calling the Purge API)')
   
   // --- System Options ---
-  .version('1.0.0', '-V, --version', 'Output the version number')
+  .version(__VERSION__, '-V, --version', 'Output the version number')
   .helpOption('-h, --help', 'Display help for command');
 
 program.hook('preAction', (thisCommand, actionCommand) => {
