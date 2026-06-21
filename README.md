@@ -1,6 +1,17 @@
 # Unofficial imgix CLI
 
+[![NPM Version](https://img.shields.io/npm/v/imgix-cli-unofficial.svg)](https://www.npmjs.com/package/imgix-cli-unofficial)
+[![NPM Downloads](https://img.shields.io/npm/dm/imgix-cli-unofficial.svg)](https://www.npmjs.com/package/imgix-cli-unofficial)
+[![Build Status](https://github.com/dyzulk/imgix-cli-unofficial/actions/workflows/publish.yml/badge.svg)](https://github.com/dyzulk/imgix-cli-unofficial/actions)
+[![License](https://img.shields.io/github/license/dyzulk/imgix-cli-unofficial.svg)](https://github.com/dyzulk/imgix-cli-unofficial/blob/main/LICENSE)
+
 A fast, modular, and professional CLI companion tool to manage, purge, and diagnose imgix assets directly from your terminal.
+
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-6DA55F?style=flat-square&logo=node.js&logoColor=white)
+![pnpm](https://img.shields.io/badge/pnpm-F69220?style=flat-square&logo=pnpm&logoColor=white)
+![imgix](https://img.shields.io/badge/imgix-FE8753?style=flat-square&logo=imgix&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=github-actions&logoColor=white)
 
 ---
 
