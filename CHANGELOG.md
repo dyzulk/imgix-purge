@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.7] - 2026-06-22
+
+### Fixed
+- Fixed an issue where the asset sync command (`imgix assets sync`) would fail with an "Invalid URL" error when encountering custom/R2 endpoints without a protocol scheme (such as `https://`).
+- Added an `ensureHttps` utility function to automatically prepend the protocol scheme to endpoints.
+
 ## [1.1.6] - 2026-06-22
 
 ### Added

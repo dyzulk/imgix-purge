@@ -1,4 +1,5 @@
 import { S3Client, ListObjectsV2Command, ListObjectsV2CommandOutput } from '@aws-sdk/client-s3';
+import { ensureHttps } from '@/internal/utils/helper.js';
 
 export interface S3ScanOptions {
   bucketName: string;
@@ -23,9 +24,11 @@ export async function scanBucketObjects(options: S3ScanOptions): Promise<string[
     prefix,
   } = options;
 
+  const formattedEndpoint = ensureHttps(endpoint);
+
   const s3 = new S3Client({
     region,
-    endpoint: endpoint || undefined,
+    endpoint: formattedEndpoint || undefined,
     credentials: {
       accessKeyId,
       secretAccessKey,

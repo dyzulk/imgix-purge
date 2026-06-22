@@ -11,3 +11,12 @@ export function normalizePath(originPath: string): string {
   }
   return normalized;
 }
+
+export function ensureHttps(endpoint: string | undefined): string | undefined {
+  if (!endpoint) return undefined;
+  let formatted = endpoint.trim();
+  if (!/^https?:\/\//i.test(formatted)) {
+    formatted = `https://${formatted}`;
+  }
+  return formatted;
+}
