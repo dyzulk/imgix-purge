@@ -16,6 +16,7 @@ export default defineConfig({
   clean: true,
   minify: true,
   sourcemap: false,
+  noExternal: [/.*/],
   define: {
     __VERSION__: JSON.stringify(version)
   }

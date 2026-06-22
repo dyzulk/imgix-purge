@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.6] - 2026-06-22
+
+### Added
+- Configured dependency bundling using `tsup`'s `noExternal` setting to pack all external runtime dependencies (`@aws-sdk/client-s3`, `@clack/prompts`, `commander`, `picocolors`) directly into the distributed build. This removes all runtime dependencies from `package.json`, preventing registry conflicts and 404 errors when installing via GitHub Packages using the `--registry` flag.
+- Added troubleshooting guidelines in `README.md` for CLI configuration command formatting and Windows/PowerShell quoting requirements.
+
+### Changed
+- Moved all runtime dependencies to `devDependencies` in `package.json`.
+
 ## [1.1.4] - 2026-06-22
 
 ### Added

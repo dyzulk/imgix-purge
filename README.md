@@ -52,16 +52,27 @@ You can also install the package from the GitHub Packages registry. This is usef
 
 #### Step 1: Configure Authentication
 
-1. Generate a GitHub Personal Access Token (classic) with the **`read:packages`** scope from your GitHub Settings -> Developer settings -> Personal access tokens.
-2. Add the token to your global configuration (typically in your `~/.npmrc` file):
-   ```ini
-   //npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
-   ```
+Generate a GitHub Personal Access Token (classic) with the **`read:packages`** scope from your GitHub Settings -> Developer settings -> Personal access tokens.
+
+You can configure this token in your `.npmrc` file via the CLI:
+
+```bash
+# For npm
+npm config set //npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
+
+# For pnpm
+pnpm config set //npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
+```
+
+Alternatively, you can manually add it to your global configuration (typically in your `~/.npmrc` file):
+```ini
+//npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
+```
 
 #### Step 2: Choose Installation Method
 
 ##### Option A: Direct Command
-Use the registry flag directly in your installation command:
+Since all dependencies are bundled into the package distribution, you can install the package directly by specifying the registry flag:
 
 ```bash
 npm install -g @dyzulk/imgix-cli-unofficial --registry=https://npm.pkg.github.com/
@@ -69,11 +80,15 @@ npm install -g @dyzulk/imgix-cli-unofficial --registry=https://npm.pkg.github.co
 pnpm add -g @dyzulk/imgix-cli-unofficial --registry=https://npm.pkg.github.com/
 ```
 
-##### Option B: Configure Scope Registry
+##### Option B: Configure Scope Registry (Recommended)
 Configure your package manager to resolve the `@dyzulk` scope to the GitHub Packages registry:
 
 ```bash
-npm config set @dyzulk:registry https://npm.pkg.github.com/
+# For npm
+npm config set "@dyzulk:registry" "https://npm.pkg.github.com"
+
+# For pnpm
+pnpm config set "@dyzulk:registry" "https://npm.pkg.github.com"
 ```
 
 Then install the package:
@@ -85,6 +100,13 @@ pnpm add -g @dyzulk/imgix-cli-unofficial
 # or
 yarn global add @dyzulk/imgix-cli-unofficial
 ```
+
+> [!TIP]
+> **Troubleshooting on Windows/PowerShell**:
+> If running `npm config set @dyzulk:registry` returns `is not a valid npm option` (commonly occurring due to trailing slash parsing in command prompts), wrap both the option name and the value in double quotes:
+> ```bash
+> npm config set "@dyzulk:registry" "https://npm.pkg.github.com"
+> ```
 
 ### Switching Registries
 
