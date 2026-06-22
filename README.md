@@ -168,12 +168,16 @@ Search and inspect files stored or registered in your imgix Sources.
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `list` | None | `--cursor <cursor>` *(Optional)* | Lists up to 50 assets registered in your active Source. | Outputs relative paths. If more pages exist, prints a cursor token. | `imgix assets list --cursor 12345` |
 | `inspect` | `<path>` *(Required)* | `-a, --api` *(Optional)* | Inspects metadata for a specific image file path. | If `<path>` is omitted, prompts you to enter it. By default, prompts you to choose the inspection mode. | `imgix assets inspect /images/banner.jpg` |
+| `sync` | None | `--prefix <prefix>` *(Optional)* | Scans the origin storage bucket (AWS S3 or Cloudflare R2) and registers assets in the imgix Asset Manager. | 1. Prompts for Secret Access Key if not found in environment (`AWS_SECRET_ACCESS_KEY` or `R2_SECRET_ACCESS_KEY`).<br>2. Scans the bucket and displays total found count.<br>3. Presents an interactive menu to sync all, sync new only, filter by sub-prefix, or dry-run. | `imgix assets sync` |
 
 #### Important Details:
 * **Warning**: The `<path>` parameter must be a direct file path (e.g., `/images/banner.jpg`), NOT a folder or include the Source name.
 * **Inspection Modes**:
   1. **Public Render Properties (via `fm=json`)**: Queries the public CDN URL to retrieve image details (dimensions, EXIF, colors). **Fails with HTTP 404** if the file does not exist or if path is a directory (e.g., `/goxstream/brands`).
   2. **Management API Record**: Queries the admin API for storage/ingest details. Skip the prompt with `-a` or `--api`.
+* **Bucket Syncing & Credentials**:
+  - The CLI fetches S3/R2 configurations (bucket name, endpoint, access key, source prefix) dynamically from the imgix Source details.
+  - Plain-text secret access keys are not returned by the imgix Management API for security reasons. Provide your secret key via the environment variables `AWS_SECRET_ACCESS_KEY` (S3) or `R2_SECRET_ACCESS_KEY` (R2), or enter it securely when prompted by the interactive wizard.
 
 </details>
 

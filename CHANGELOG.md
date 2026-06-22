@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2026-06-22
+
+### Added
+- Added new `imgix assets sync` subcommand to scan an origin storage bucket (Cloudflare R2 or AWS S3) and index assets into the imgix Asset Manager.
+- Added interactive options menu (sync all, sync new only, filter by sub-prefix, dry-run) to manage sync execution after counting the scanned bucket assets.
+- Added support for AWS/R2 credentials lookup from environment variables (`AWS_SECRET_ACCESS_KEY` or `R2_SECRET_ACCESS_KEY`) and secure interactive password prompt fallback.
+- Added `@aws-sdk/client-s3` dependency for secure bucket interaction.
+
+### Changed
+- Refactored monolithic codebase architecture to isolate concerns: decomposed API wrappers into sub-modules under `src/pkg/api/`, separated S3 interactions into a storage service layer, and split assets commands into individual files under `src/cmd/assets/`.
+
 ## [1.0.9] - 2026-06-22
 
 ### Changed

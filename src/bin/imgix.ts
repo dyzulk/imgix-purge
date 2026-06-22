@@ -3,7 +3,7 @@ import { Command } from 'commander';
 import { runPurge } from '../cmd/index.js';
 import { runAuthSetup, runAuthStatus, runAuthClear } from '../cmd/auth.js';
 import { runSourceList, runSourceInfo } from '../cmd/source.js';
-import { runAssetsList, runAssetsInspect } from '../cmd/assets.js';
+import { runAssetsList, runAssetsInspect, runAssetsSync } from '../cmd/assets/index.js';
 import { runUrlSign, runUrlOptimize } from '../cmd/url.js';
 import { runDiagnose } from '../cmd/diagnose.js';
 import { runUsageStatus } from '../cmd/usage.js';
@@ -122,6 +122,14 @@ assetsCmd
   .option('-a, --api', 'Query Management API metadata instead of public render properties')
   .action(async (path, opts) => {
     await runAssetsInspect(path, opts);
+  });
+
+assetsCmd
+  .command('sync')
+  .description('Scan origin storage bucket and index assets into imgix')
+  .option('--prefix <prefix>', 'Prefix to filter scanned assets')
+  .action(async (opts) => {
+    await runAssetsSync(opts);
   });
 
 // Register the url command group

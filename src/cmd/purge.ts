@@ -1,8 +1,8 @@
 import pc from 'picocolors';
 import { config, validateConfig } from '../pkg/config.js';
 import { delay, normalizePath } from '../internal/utils/helper.js';
-import { fetchAssetsPage, submitPurgeRequest } from '../pkg/api.js';
-import { resolveTargetSources } from '../internal/utils/resolver.js';
+import { fetchAssetsPage, submitPurgeRequest } from '../pkg/api/index.js';
+import { resolveTargetSources } from '../internal/wizards/source-resolver.js';
 import { ui } from '../internal/ui/prompts.js';
 
 export async function runPurge() {

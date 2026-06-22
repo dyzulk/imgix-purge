@@ -1,6 +1,6 @@
 import pc from 'picocolors';
 import crypto from 'node:crypto';
-import { resolveTargetSources } from '../internal/utils/resolver.js';
+import { resolveTargetSources } from '../internal/wizards/source-resolver.js';
 import { config, validateConfig } from '../pkg/config.js';
 import { ui } from '../internal/ui/prompts.js';
 

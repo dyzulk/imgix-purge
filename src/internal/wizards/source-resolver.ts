@@ -1,5 +1,5 @@
 import pc from 'picocolors';
-import { fetchSources, fetchSourceDetail } from '../../pkg/api.js';
+import { fetchSources, fetchSourceDetail } from '../../pkg/api/index.js';
 import { ui } from '../ui/prompts.js';
 
 export interface ResolvedSource {

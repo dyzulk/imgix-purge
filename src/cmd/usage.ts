@@ -1,5 +1,5 @@
 import pc from 'picocolors';
-import { fetchBillingUsage } from '../pkg/api.js';
+import { fetchBillingUsage } from '../pkg/api/index.js';
 import { config, validateConfig } from '../pkg/config.js';
 import { ui } from '../internal/ui/prompts.js';
 
