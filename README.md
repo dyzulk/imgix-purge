@@ -47,7 +47,20 @@ yarn global add imgix-cli-unofficial
 
 You can also install the package from the GitHub Packages registry. This is useful as an alternative or mirror. The package is published under the `@dyzulk` scope.
 
-#### Option A: Direct Command
+> [!IMPORTANT]
+> GitHub Packages requires authentication (a Personal Access Token with the `read:packages` scope) even to download and install public packages. Running the installation commands below without configuring authentication first will result in a `401 Unauthorized` error.
+
+#### Step 1: Configure Authentication
+
+1. Generate a GitHub Personal Access Token (classic) with the **`read:packages`** scope from your GitHub Settings -> Developer settings -> Personal access tokens.
+2. Add the token to your global configuration (typically in your `~/.npmrc` file):
+   ```ini
+   //npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
+   ```
+
+#### Step 2: Choose Installation Method
+
+##### Option A: Direct Command
 Use the registry flag directly in your installation command:
 
 ```bash
@@ -56,7 +69,7 @@ npm install -g @dyzulk/imgix-cli-unofficial --registry=https://npm.pkg.github.co
 pnpm add -g @dyzulk/imgix-cli-unofficial --registry=https://npm.pkg.github.com/
 ```
 
-#### Option B: Configure Scope Registry
+##### Option B: Configure Scope Registry
 Configure your package manager to resolve the `@dyzulk` scope to the GitHub Packages registry:
 
 ```bash
@@ -77,7 +90,7 @@ yarn global add @dyzulk/imgix-cli-unofficial
 
 If you want to switch between the npm version (`imgix-cli-unofficial`) and the GitHub Packages version (`@dyzulk/imgix-cli-unofficial`), you should reinstall the package using your package manager.
 
-For example, to switch from the npm registry to the GitHub Packages registry:
+For example, to switch from the npm registry to the GitHub Packages registry (ensure you have configured your token in `.npmrc` first):
 
 1. Uninstall the existing package:
    ```bash
