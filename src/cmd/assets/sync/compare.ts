@@ -1,6 +1,6 @@
-import { ui } from '../../../internal/ui/prompts.js';
-import { fetchAssetsPage } from '../../../pkg/api/index.js';
-import { delay } from '../../../internal/utils/helper.js';
+import { ui } from '@/internal/ui/prompts.js';
+import { fetchAssetsPage, API_ENDPOINTS } from '@/pkg/api/index.js';
+import { delay } from '@/internal/utils/helper.js';
 
 export async function filterNewAssetsOnly(
   apiKey: string,
@@ -12,7 +12,7 @@ export async function filterNewAssetsOnly(
   
   let existingPaths = new Set<string>();
   try {
-    let nextUrl: string | null = `https://api.imgix.com/api/v1/sources/${sourceId}/assets?page[size]=100`;
+    let nextUrl: string | null = API_ENDPOINTS.sources.assets(sourceId, 100);
     let pageCount = 1;
     
     while (nextUrl) {

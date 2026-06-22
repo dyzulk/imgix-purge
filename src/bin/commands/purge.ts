@@ -1,5 +1,7 @@
 import { Command } from 'commander';
-import { runPurge } from '../../cmd/index.js';
+import { runPurge } from '@/cmd/purge.js';
+
+
 
 export function registerPurgeCommand(program: Command) {
   program

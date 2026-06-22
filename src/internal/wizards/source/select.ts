@@ -1,5 +1,6 @@
 import pc from 'picocolors';
-import { ui } from '../../ui/prompts.js';
+import { ui } from '@/internal/ui/prompts.js';
+
 
 export async function selectSingleSource(activeSources: any[]): Promise<any> {
   if (activeSources.length === 1) {

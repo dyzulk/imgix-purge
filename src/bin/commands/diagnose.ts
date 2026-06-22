@@ -1,5 +1,6 @@
 import { Command } from 'commander';
-import { runDiagnose } from '../../cmd/diagnose.js';
+import { runDiagnose } from '@/cmd/diagnose.js';
+
 
 export function registerDiagnoseCommand(program: Command) {
   program

@@ -1,7 +1,7 @@
-import { API_BASE } from './client.js';
+import { API_ENDPOINTS } from '@/pkg/api/client.js';
 
 export async function fetchBillingUsage(apiKey: string): Promise<any> {
-  const response = await fetch(`${API_BASE}/reports`, {
+  const response = await fetch(API_ENDPOINTS.reports(), {
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Accept': 'application/vnd.api+json',
@@ -17,3 +17,4 @@ export async function fetchBillingUsage(apiKey: string): Promise<any> {
 
   return await response.json();
 }
+

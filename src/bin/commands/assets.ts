@@ -1,5 +1,6 @@
 import { Command } from 'commander';
-import { runAssetsList, runAssetsInspect, runAssetsSync } from '../../cmd/assets/index.js';
+import { runAssetsList, runAssetsInspect, runAssetsSync } from '@/cmd/assets/index.js';
+
 
 export function registerAssetsCommands(program: Command) {
   const assetsCmd = program

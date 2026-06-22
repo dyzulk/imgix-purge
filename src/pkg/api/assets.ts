@@ -1,4 +1,4 @@
-import { API_BASE } from './client.js';
+import { API_ENDPOINTS } from '@/pkg/api/client.js';
 
 export interface AssetResponse {
   data: Array<{
@@ -46,7 +46,7 @@ export async function fetchAssetsPage(apiKey: string, url: string): Promise<Asse
 }
 
 export async function fetchAssets(apiKey: string, sourceId: string, cursor?: string): Promise<AssetResponse> {
-  let url = `${API_BASE}/sources/${sourceId}/assets?page[size]=50`;
+  let url = API_ENDPOINTS.sources.assets(sourceId, 50);
   if (cursor) {
     url += `&page[cursor]=${cursor}`;
   }
@@ -56,7 +56,7 @@ export async function fetchAssets(apiKey: string, sourceId: string, cursor?: str
 export async function fetchAssetDetail(apiKey: string, sourceId: string, originPath: string): Promise<AssetDetailResponse> {
   const cleanPath = originPath.startsWith('/') ? originPath.substring(1) : originPath;
   const assetId = `${sourceId}/${cleanPath}`;
-  const response = await fetch(`${API_BASE}/assets/${encodeURIComponent(assetId)}`, {
+  const response = await fetch(API_ENDPOINTS.assets.detail(assetId), {
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Accept': 'application/vnd.api+json',
@@ -73,7 +73,7 @@ export async function fetchAssetDetail(apiKey: string, sourceId: string, originP
 
 export async function addAssetToSource(apiKey: string, sourceId: string, originPath: string): Promise<boolean> {
   const cleanPath = originPath.startsWith('/') ? originPath.substring(1) : originPath;
-  const response = await fetch(`${API_BASE}/sources/${sourceId}/assets/add/${encodeURIComponent(cleanPath)}`, {
+  const response = await fetch(API_ENDPOINTS.sources.addAsset(sourceId, cleanPath), {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -89,3 +89,4 @@ export async function addAssetToSource(apiKey: string, sourceId: string, originP
     return false;
   }
 }
+

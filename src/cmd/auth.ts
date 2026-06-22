@@ -1,12 +1,14 @@
 import pc from 'picocolors';
-import { getGlobalAuth, setGlobalAuth, clearGlobalAuth } from '../pkg/auth.js';
-import { ui } from '../internal/ui/prompts.js';
+import { getGlobalAuth, setGlobalAuth, clearGlobalAuth } from '@/pkg/auth.js';
+import { ui } from '@/internal/ui/prompts.js';
+import { EXTERNAL_URLS } from '@/pkg/constants.js';
 
 export async function runAuthSetup() {
   ui.intro('imgix CLI Authentication Setup');
   ui.log.info('To manage or create API keys and view official scopes/permissions, visit:');
-  ui.log.info(pc.cyan('https://docs.imgix.com/apis/management/overview'));
-  ui.log.info('You can generate your keys directly at: ' + pc.cyan('https://dashboard.imgix.com/api-keys'));
+  ui.log.info(pc.cyan(EXTERNAL_URLS.docsOverview));
+  ui.log.info('You can generate your keys directly at: ' + pc.cyan(EXTERNAL_URLS.dashboardApiKeys));
+
 
   const apiKey = await ui.text({
     message: 'Enter your imgix Management API Key (e.g. ak_...):',

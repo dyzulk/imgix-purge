@@ -1,4 +1,4 @@
-import { fetchSources, fetchSourceDetail } from '../../../pkg/api/index.js';
+import { fetchSources, fetchSourceDetail } from '@/pkg/api/index.js';
 
 export async function getActiveSources(apiKey: string): Promise<any[]> {
   const sourcesList = await fetchSources(apiKey);

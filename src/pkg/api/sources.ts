@@ -1,4 +1,4 @@
-import { API_BASE } from './client.js';
+import { API_ENDPOINTS } from '@/pkg/api/client.js';
 
 export interface SourceResponse {
   data: {
@@ -51,7 +51,7 @@ export interface SourceDetailResponse {
 
 export async function fetchSourceDomains(apiKey: string, sourceId: string): Promise<string[]> {
   console.log(`Fetching details for Source ID: ${sourceId}...`);
-  const response = await fetch(`${API_BASE}/sources/${sourceId}`, {
+  const response = await fetch(API_ENDPOINTS.sources.detail(sourceId), {
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Accept': 'application/vnd.api+json',
@@ -72,7 +72,7 @@ export async function fetchSourceDomains(apiKey: string, sourceId: string): Prom
 }
 
 export async function fetchSources(apiKey: string): Promise<SourceListResponse> {
-  const response = await fetch(`${API_BASE}/sources`, {
+  const response = await fetch(API_ENDPOINTS.sources.list(), {
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Accept': 'application/vnd.api+json',
@@ -88,7 +88,7 @@ export async function fetchSources(apiKey: string): Promise<SourceListResponse> 
 }
 
 export async function fetchSourceDetail(apiKey: string, sourceId: string): Promise<SourceDetailResponse> {
-  const response = await fetch(`${API_BASE}/sources/${sourceId}`, {
+  const response = await fetch(API_ENDPOINTS.sources.detail(sourceId), {
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Accept': 'application/vnd.api+json',
@@ -102,3 +102,4 @@ export async function fetchSourceDetail(apiKey: string, sourceId: string): Promi
 
   return (await response.json()) as SourceDetailResponse;
 }
+

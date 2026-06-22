@@ -1,8 +1,9 @@
 import pc from 'picocolors';
-import { fetchSources, fetchSourceDetail } from '../pkg/api/index.js';
-import { resolveSingleTargetSource } from '../internal/wizards/source-resolver.js';
-import { config, validateConfig } from '../pkg/config.js';
-import { ui } from '../internal/ui/prompts.js';
+import { fetchSources, fetchSourceDetail } from '@/pkg/api/index.js';
+import { resolveSingleTargetSource } from '@/internal/wizards/source-resolver.js';
+import { config, validateConfig } from '@/pkg/config.js';
+import { ui } from '@/internal/ui/prompts.js';
+
 
 export async function runSourceList() {
   await validateConfig();

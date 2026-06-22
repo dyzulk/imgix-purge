@@ -1,9 +1,10 @@
 import pc from 'picocolors';
 import crypto from 'node:crypto';
-import { fetchAssetDetail } from '../../pkg/api/index.js';
-import { resolveSingleTargetSource } from '../../internal/wizards/source-resolver.js';
-import { config, validateConfig } from '../../pkg/config.js';
-import { ui } from '../../internal/ui/prompts.js';
+import { fetchAssetDetail } from '@/pkg/api/index.js';
+import { resolveSingleTargetSource } from '@/internal/wizards/source-resolver.js';
+import { config, validateConfig } from '@/pkg/config.js';
+import { ui } from '@/internal/ui/prompts.js';
+
 
 function signPath(path: string, params: string, secureToken: string): string {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;

@@ -1,5 +1,6 @@
 import { Command } from 'commander';
-import { runUsageStatus } from '../../cmd/usage.js';
+import { runUsageStatus } from '@/cmd/usage.js';
+
 
 export function registerUsageCommands(program: Command) {
   const usageCmd = program

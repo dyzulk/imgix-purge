@@ -1,6 +1,7 @@
-import { ui } from '../../../internal/ui/prompts.js';
-import { addAssetToSource } from '../../../pkg/api/index.js';
-import { delay } from '../../../internal/utils/helper.js';
+import { ui } from '@/internal/ui/prompts.js';
+import { addAssetToSource } from '@/pkg/api/index.js';
+import { delay } from '@/internal/utils/helper.js';
+
 
 export async function performAssetIndexing(
   apiKey: string,

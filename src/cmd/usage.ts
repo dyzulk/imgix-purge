@@ -1,7 +1,8 @@
 import pc from 'picocolors';
-import { fetchBillingUsage } from '../pkg/api/index.js';
-import { config, validateConfig } from '../pkg/config.js';
-import { ui } from '../internal/ui/prompts.js';
+import { fetchBillingUsage } from '@/pkg/api/index.js';
+import { config, validateConfig } from '@/pkg/config.js';
+import { ui } from '@/internal/ui/prompts.js';
+
 
 export async function runUsageStatus() {
   await validateConfig();

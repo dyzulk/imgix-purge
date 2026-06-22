@@ -1,11 +1,12 @@
 import pc from 'picocolors';
-import { resolveSingleTargetSource } from '../../internal/wizards/source-resolver.js';
-import { config, validateConfig } from '../../pkg/config.js';
-import { ui } from '../../internal/ui/prompts.js';
-import { scanBucketObjects } from '../../internal/services/storage.js';
-import { resolveBucketConfig } from './sync/config.js';
-import { filterNewAssetsOnly } from './sync/compare.js';
-import { performAssetIndexing } from './sync/executor.js';
+import { resolveSingleTargetSource } from '@/internal/wizards/source-resolver.js';
+import { config, validateConfig } from '@/pkg/config.js';
+import { ui } from '@/internal/ui/prompts.js';
+import { scanBucketObjects } from '@/internal/services/storage.js';
+import { resolveBucketConfig } from '@/cmd/assets/sync/config.js';
+import { filterNewAssetsOnly } from '@/cmd/assets/sync/compare.js';
+import { performAssetIndexing } from '@/cmd/assets/sync/executor.js';
+
 
 export async function runAssetsSync(options: { prefix?: string }) {
   await validateConfig();

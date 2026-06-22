@@ -1,5 +1,6 @@
 import pc from 'picocolors';
-import { ui } from '../internal/ui/prompts.js';
+import { ui } from '@/internal/ui/prompts.js';
+
 
 export async function runDiagnose(urlStr?: string) {
   let targetUrl = (urlStr || '').trim();

@@ -1,5 +1,6 @@
-import { ui } from '../../../internal/ui/prompts.js';
-import { fetchSourceDetail } from '../../../pkg/api/index.js';
+import { ui } from '@/internal/ui/prompts.js';
+import { fetchSourceDetail } from '@/pkg/api/index.js';
+
 
 export interface BucketConfig {
   bucketName: string;

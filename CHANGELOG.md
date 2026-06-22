@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.3] - 2026-06-22
+
+### Changed
+- Centralized all global URLs and API endpoints in a new global constants file (`constants.ts`) and `API_ENDPOINTS` object.
+- Replaced relative path imports (both sibling `./` and parent `../`) with mapped path aliases (`@/`) across the entire codebase.
+- Deleted the deprecated barrel file `src/cmd/index.ts` to make command imports in `src/bin/commands/` consistent and direct.
+
 ## [1.1.2] - 2026-06-22
 
 ### Changed

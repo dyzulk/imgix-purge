@@ -1,7 +1,7 @@
-import { API_BASE } from './client.js';
+import { API_ENDPOINTS } from '@/pkg/api/client.js';
 
 export async function submitPurgeRequest(apiKey: string, urlToPurge: string): Promise<boolean> {
-  const response = await fetch(`${API_BASE}/purge`, {
+  const response = await fetch(API_ENDPOINTS.purge(), {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -25,3 +25,4 @@ export async function submitPurgeRequest(apiKey: string, urlToPurge: string): Pr
     return false;
   }
 }
+

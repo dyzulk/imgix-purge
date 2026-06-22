@@ -1,4 +1,4 @@
-import { getGlobalAuth } from './auth.js';
+import { getGlobalAuth } from '@/pkg/auth.js';
 
 export interface Config {
   apiKey: string;

@@ -3,7 +3,8 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
 import pc from 'picocolors';
-import { ui } from '../internal/ui/prompts.js';
+import { ui } from '@/internal/ui/prompts.js';
+import { EXTERNAL_URLS } from '@/pkg/constants.js';
 
 export function getInstallationSource(): 'npm' | 'yarn' | 'pnpm' | 'git-clone' | 'unknown' {
   let currentFilePath = fileURLToPath(import.meta.url);
@@ -94,7 +95,7 @@ export async function runSelfUpdate(currentVersion: string) {
 
   let latestVersion = '';
   try {
-    const res = await fetch('https://registry.npmjs.org/imgix-cli-unofficial/latest');
+    const res = await fetch(EXTERNAL_URLS.npmRegistry);
     if (!res.ok) {
       throw new Error(`Registry responded with status ${res.status}`);
     }

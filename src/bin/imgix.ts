@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { config } from '../pkg/config.js';
-import { registerPurgeCommand } from './commands/purge.js';
-import { registerAuthCommands } from './commands/auth.js';
-import { registerSourceCommands } from './commands/source.js';
-import { registerAssetsCommands } from './commands/assets.js';
-import { registerUrlCommands } from './commands/url.js';
-import { registerDiagnoseCommand } from './commands/diagnose.js';
-import { registerUsageCommands } from './commands/usage.js';
-import { registerUpdateCommands } from './commands/update.js';
+import { config } from '@/pkg/config.js';
+import { registerPurgeCommand } from '@/bin/commands/purge.js';
+import { registerAuthCommands } from '@/bin/commands/auth.js';
+import { registerSourceCommands } from '@/bin/commands/source.js';
+import { registerAssetsCommands } from '@/bin/commands/assets.js';
+import { registerUrlCommands } from '@/bin/commands/url.js';
+import { registerDiagnoseCommand } from '@/bin/commands/diagnose.js';
+import { registerUsageCommands } from '@/bin/commands/usage.js';
+import { registerUpdateCommands } from '@/bin/commands/update.js';
+
 
 declare const __VERSION__: string;
 

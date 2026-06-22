@@ -1,7 +1,8 @@
-import { ui } from '../ui/prompts.js';
-import { promptManualSource } from './source/manual.js';
-import { selectSingleSource, selectMultipleSources } from './source/select.js';
-import { getActiveSources, resolveSourceDetails } from './source/fetch.js';
+import { ui } from '@/internal/ui/prompts.js';
+import { promptManualSource } from '@/internal/wizards/source/manual.js';
+import { selectSingleSource, selectMultipleSources } from '@/internal/wizards/source/select.js';
+import { getActiveSources, resolveSourceDetails } from '@/internal/wizards/source/fetch.js';
+
 
 export interface ResolvedSource {
   id: string;

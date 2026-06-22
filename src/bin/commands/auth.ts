@@ -1,5 +1,6 @@
 import { Command } from 'commander';
-import { runAuthSetup, runAuthStatus, runAuthClear } from '../../cmd/auth.js';
+import { runAuthSetup, runAuthStatus, runAuthClear } from '@/cmd/auth.js';
+
 
 export function registerAuthCommands(program: Command) {
   const authCmd = program

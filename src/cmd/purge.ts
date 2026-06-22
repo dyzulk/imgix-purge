@@ -1,9 +1,10 @@
 import pc from 'picocolors';
-import { config, validateConfig } from '../pkg/config.js';
-import { delay, normalizePath } from '../internal/utils/helper.js';
-import { fetchAssetsPage, submitPurgeRequest } from '../pkg/api/index.js';
-import { resolveTargetSources } from '../internal/wizards/source-resolver.js';
-import { ui } from '../internal/ui/prompts.js';
+import { config, validateConfig } from '@/pkg/config.js';
+import { delay, normalizePath } from '@/internal/utils/helper.js';
+import { fetchAssetsPage, submitPurgeRequest, API_ENDPOINTS } from '@/pkg/api/index.js';
+import { resolveTargetSources } from '@/internal/wizards/source-resolver.js';
+import { ui } from '@/internal/ui/prompts.js';
+
 
 export async function runPurge() {
   await validateConfig();
@@ -74,7 +75,7 @@ export async function runPurge() {
       s.start('Fetching asset list from Source...');
       
       try {
-        let nextUrl: string | null = `https://api.imgix.com/api/v1/sources/${src.id}/assets?page[size]=100`;
+        let nextUrl: string | null = API_ENDPOINTS.sources.assets(src.id, 100);
         let pageCount = 1;
         
         while (nextUrl) {

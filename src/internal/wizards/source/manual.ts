@@ -1,4 +1,4 @@
-import { ui } from '../../ui/prompts.js';
+import { ui } from '@/internal/ui/prompts.js';
 
 export async function promptManualSource() {
   const domainInput = await ui.text({

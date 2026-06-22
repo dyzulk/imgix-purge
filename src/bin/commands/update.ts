@@ -1,5 +1,6 @@
 import { Command } from 'commander';
-import { runSelfUpdate } from '../../cmd/update.js';
+import { runSelfUpdate } from '@/cmd/update.js';
+
 
 export function registerUpdateCommands(program: Command, version: string) {
   program

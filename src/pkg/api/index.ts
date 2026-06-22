@@ -1,5 +1,6 @@
-export * from './client.js';
-export * from './assets.js';
-export * from './sources.js';
-export * from './usage.js';
-export * from './purge.js';
+export * from '@/pkg/api/client.js';
+export * from '@/pkg/api/assets.js';
+export * from '@/pkg/api/sources.js';
+export * from '@/pkg/api/usage.js';
+export * from '@/pkg/api/purge.js';
+

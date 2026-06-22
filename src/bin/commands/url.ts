@@ -1,5 +1,6 @@
 import { Command } from 'commander';
-import { runUrlSign, runUrlOptimize } from '../../cmd/url.js';
+import { runUrlSign, runUrlOptimize } from '@/cmd/url.js';
+
 
 export function registerUrlCommands(program: Command) {
   const urlCmd = program
