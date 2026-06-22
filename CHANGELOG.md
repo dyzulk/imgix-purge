@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.7] - 2026-06-22
+
+### Fixed
+- Fixed package manager detection failure under Windows junction/symlink paths (such as `nvm-windows` directories) by resolving all paths to their real physical directories using `fs.realpathSync()`.
+
 ## [1.0.6] - 2026-06-22
 
 ### Changed

@@ -1,11 +1,17 @@
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import fs from 'fs';
 import pc from 'picocolors';
 import { ui } from '../internal/ui/prompts.js';
 
 export function getInstallationSource(): 'npm' | 'yarn' | 'pnpm' | 'git-clone' | 'unknown' {
-  const currentFilePath = fileURLToPath(import.meta.url);
+  let currentFilePath = fileURLToPath(import.meta.url);
+  try {
+    currentFilePath = fs.realpathSync(currentFilePath);
+  } catch (e) {
+    // Ignore error
+  }
   const normalizedPath = currentFilePath.replace(/\\/g, '/');
 
   const isInsideNodeModules = normalizedPath.includes('/node_modules/');
@@ -16,7 +22,8 @@ export function getInstallationSource(): 'npm' | 'yarn' | 'pnpm' | 'git-clone' |
 
   // 1. Check NPM root dynamically
   try {
-    const npmRoot = execSync('npm root -g', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim().replace(/\\/g, '/');
+    let npmRoot = execSync('npm root -g', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+    npmRoot = fs.realpathSync(npmRoot).replace(/\\/g, '/');
     if (npmRoot && normalizedPath.toLowerCase().includes(npmRoot.toLowerCase())) {
       return 'npm';
     }
@@ -26,7 +33,8 @@ export function getInstallationSource(): 'npm' | 'yarn' | 'pnpm' | 'git-clone' |
 
   // 2. Check PNPM root dynamically
   try {
-    const pnpmRoot = execSync('pnpm root -g', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim().replace(/\\/g, '/');
+    let pnpmRoot = execSync('pnpm root -g', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+    pnpmRoot = fs.realpathSync(pnpmRoot).replace(/\\/g, '/');
     if (pnpmRoot && normalizedPath.toLowerCase().includes(pnpmRoot.toLowerCase())) {
       return 'pnpm';
     }
@@ -36,7 +44,8 @@ export function getInstallationSource(): 'npm' | 'yarn' | 'pnpm' | 'git-clone' |
 
   // 3. Check Yarn root dynamically
   try {
-    const yarnRoot = execSync('yarn global dir', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim().replace(/\\/g, '/');
+    let yarnRoot = execSync('yarn global dir', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+    yarnRoot = fs.realpathSync(yarnRoot).replace(/\\/g, '/');
     if (yarnRoot && normalizedPath.toLowerCase().includes(yarnRoot.toLowerCase())) {
       return 'yarn';
     }

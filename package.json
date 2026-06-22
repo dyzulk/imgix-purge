@@ -1,6 +1,6 @@
 {
   "name": "imgix-cli-unofficial",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A CLI tool to bulk purge all assets in an imgix Source cache.",
   "main": "dist/bin/imgix.js",
   "bin": {
