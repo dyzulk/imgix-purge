@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] - 2026-06-22
+
+### Changed
+- Refactored `imgix assets sync` command, decomposing the monolithic implementation into modular files under `src/cmd/assets/sync/` (`config.ts`, `compare.ts`, `executor.ts`).
+
 ## [1.1.1] - 2026-06-22
 
 ### Changed

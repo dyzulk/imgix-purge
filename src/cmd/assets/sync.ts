@@ -1,10 +1,11 @@
 import pc from 'picocolors';
-import { fetchSourceDetail, fetchAssetsPage, addAssetToSource } from '../../pkg/api/index.js';
 import { resolveSingleTargetSource } from '../../internal/wizards/source-resolver.js';
 import { config, validateConfig } from '../../pkg/config.js';
 import { ui } from '../../internal/ui/prompts.js';
-import { delay } from '../../internal/utils/helper.js';
 import { scanBucketObjects } from '../../internal/services/storage.js';
+import { resolveBucketConfig } from './sync/config.js';
+import { filterNewAssetsOnly } from './sync/compare.js';
+import { performAssetIndexing } from './sync/executor.js';
 
 export async function runAssetsSync(options: { prefix?: string }) {
   await validateConfig();
@@ -18,68 +19,14 @@ export async function runAssetsSync(options: { prefix?: string }) {
     process.exit(1);
   }
   
-  const s = ui.spinner();
-  s.start('Fetching Source configuration details...');
-  
-  let sourceDetail;
-  try {
-    sourceDetail = await fetchSourceDetail(config.apiKey, src.id);
-    s.stop('Source details fetched successfully');
-  } catch (error: any) {
-    s.stop('Failed to fetch source details');
-    ui.log.error(error.message || error);
-    process.exit(1);
-  }
-  
-  const deployment = sourceDetail.data.attributes.deployment;
-  const type = deployment.type;
-  
-  if (type !== 's3' && type !== 's3_compatible') {
-    ui.log.error(`Unsupported source deployment type: ${type}. Only S3 and S3-Compatible (R2) sources are supported for bucket sync.`);
-    process.exit(1);
-  }
-  
-  const configObj = deployment[type] || {};
-  
-  // Extract bucket details
-  const bucketName = configObj.s3_bucket || configObj.bucket_name || configObj.bucket;
-  const accessKeyId = configObj.s3_access_key || configObj.access_key || configObj.access_key_id;
-  const sourcePrefix = configObj.s3_prefix || configObj.prefix || '';
-  const endpoint = configObj.endpoint || configObj.s3_endpoint || configObj.s3_compatible_endpoint;
-  const region = configObj.region || 'auto';
-  
-  if (!bucketName) {
-    ui.log.error('Bucket name could not be resolved from Source configuration.');
-    process.exit(1);
-  }
-  if (!accessKeyId) {
-    ui.log.error('Access Key ID could not be resolved from Source configuration.');
-    process.exit(1);
-  }
-  
-  // Resolve secret key
-  let secretAccessKey = process.env.R2_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY;
-  if (!secretAccessKey) {
-    const inputSecret = await ui.password({
-      message: `Enter AWS/R2 Secret Access Key for bucket "${bucketName}" (Access Key ID: ${accessKeyId}):`,
-      validate: (val) => {
-        if (!val || val.trim().length === 0) return 'Secret Access Key is required.';
-      }
-    });
-    
-    if (ui.isCancel(inputSecret)) {
-      ui.cancel('Sync cancelled.');
-      process.exit(0);
-    }
-    secretAccessKey = (inputSecret as string).trim();
-  }
+  const bucketConfig = await resolveBucketConfig(config.apiKey, src.id);
   
   // Combine prefix options: CLI option takes precedence, fallback to source prefix
-  const filterPrefix = options.prefix !== undefined ? options.prefix : sourcePrefix;
+  const filterPrefix = options.prefix !== undefined ? options.prefix : bucketConfig.sourcePrefix;
   
-  ui.log.step(`Scanning bucket: ${pc.cyan(bucketName)}`);
-  if (endpoint) {
-    ui.log.step(`Endpoint: ${pc.dim(endpoint)}`);
+  ui.log.step(`Scanning bucket: ${pc.cyan(bucketConfig.bucketName)}`);
+  if (bucketConfig.endpoint) {
+    ui.log.step(`Endpoint: ${pc.dim(bucketConfig.endpoint)}`);
   }
   if (filterPrefix) {
     ui.log.step(`Prefix Filter: ${pc.cyan(filterPrefix)}`);
@@ -91,11 +38,11 @@ export async function runAssetsSync(options: { prefix?: string }) {
   let keys: string[] = [];
   try {
     keys = await scanBucketObjects({
-      bucketName,
-      accessKeyId,
-      secretAccessKey,
-      endpoint: endpoint || undefined,
-      region,
+      bucketName: bucketConfig.bucketName,
+      accessKeyId: bucketConfig.accessKeyId,
+      secretAccessKey: bucketConfig.secretAccessKey,
+      endpoint: bucketConfig.endpoint,
+      region: bucketConfig.region,
       prefix: filterPrefix || undefined,
     });
     
@@ -132,46 +79,7 @@ export async function runAssetsSync(options: { prefix?: string }) {
   let keysToSync = [...keys];
   
   if (action === 'sync_new') {
-    const sCompare = ui.spinner();
-    sCompare.start('Fetching currently indexed assets in imgix...');
-    
-    let existingPaths = new Set<string>();
-    try {
-      let nextUrl: string | null = `https://api.imgix.com/api/v1/sources/${src.id}/assets?page[size]=100`;
-      let pageCount = 1;
-      
-      while (nextUrl) {
-        sCompare.message(`Fetching asset page ${pageCount}...`);
-        const pageData = await fetchAssetsPage(config.apiKey, nextUrl);
-        const assets = pageData.data || [];
-        
-        for (const asset of assets) {
-          let originPath = asset.attributes?.origin_path || '';
-          if (!originPath && asset.id.includes('/')) {
-            originPath = asset.id.substring(asset.id.indexOf('/') + 1);
-          }
-          if (originPath) {
-            const cleanPath = originPath.startsWith('/') ? originPath.substring(1) : originPath;
-            existingPaths.add(cleanPath);
-          }
-        }
-        nextUrl = pageData.links?.next || null;
-        pageCount++;
-        await delay(100);
-      }
-      
-      keysToSync = keys.filter(k => {
-        const cleanK = k.startsWith('/') ? k.substring(1) : k;
-        return !existingPaths.has(cleanK);
-      });
-      
-      sCompare.stop(`Fetch complete. Found ${keysToSync.length} assets not yet indexed in imgix.`);
-    } catch (err: any) {
-      sCompare.stop('Failed to compare assets');
-      ui.log.error(`Error comparing assets: ${err.message}`);
-      process.exit(1);
-    }
-    
+    keysToSync = await filterNewAssetsOnly(config.apiKey, src.id, keys);
     if (keysToSync.length === 0) {
       ui.log.info('All scanned assets are already indexed in imgix.');
       ui.outro('Sync complete.');
@@ -207,40 +115,7 @@ export async function runAssetsSync(options: { prefix?: string }) {
     return;
   }
   
-  // Confirm sync operation
-  const confirmProceed = await ui.confirm({
-    message: `Ready to index ${keysToSync.length} asset(s) into Source "${src.name}". Proceed?`,
-    initialValue: true
-  });
-  
-  if (ui.isCancel(confirmProceed) || !confirmProceed) {
-    ui.cancel('Sync aborted.');
-    process.exit(0);
-  }
-  
-  // Perform the sync using the addAssetToSource API call
-  const sAdd = ui.spinner();
-  sAdd.start(`Indexing ${keysToSync.length} assets...`);
-  
-  let successCount = 0;
-  let failCount = 0;
-  
-  for (let i = 0; i < keysToSync.length; i++) {
-    const originPath = keysToSync[i];
-    sAdd.message(`[${i + 1}/${keysToSync.length}] Indexing: ${originPath}...`);
-    
-    const success = await addAssetToSource(config.apiKey, src.id, originPath);
-    if (success) {
-      successCount++;
-    } else {
-      failCount++;
-    }
-    
-    await delay(100);
-  }
-  
-  sAdd.stop(`Indexing complete.`);
-  ui.log.success(`Successfully queued/indexed: ${successCount}, Failed: ${failCount}`);
+  await performAssetIndexing(config.apiKey, src.id, src.name, keysToSync);
   
   ui.outro('Sync complete.');
 }
