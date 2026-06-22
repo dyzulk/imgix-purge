@@ -43,7 +43,8 @@ npm install -g imgix-cli-unofficial
 yarn global add imgix-cli-unofficial
 ```
 
-### Globally from GitHub Packages (Alternative)
+<details>
+<summary><b>Globally from GitHub Packages (Alternative)</b> (Click to expand)</summary>
 
 You can also install the package from the GitHub Packages registry. This is useful as an alternative or mirror. The package is published under the `@dyzulk` scope.
 
@@ -107,6 +108,8 @@ yarn global add @dyzulk/imgix-cli-unofficial
 > ```bash
 > npm config set "@dyzulk:registry" "https://npm.pkg.github.com"
 > ```
+
+</details>
 
 ### Switching Registries
 
