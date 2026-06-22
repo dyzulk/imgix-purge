@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2026-06-22
+
+### Changed
+- Refactored `src/bin/imgix.ts` to delegate subcommand registrations into separate modular files under `src/bin/commands/`.
+- Deconstructed the `src/internal/wizards/source-resolver.ts` wizard into focused sub-modules (`manual.ts`, `select.ts`, `fetch.ts`) under `src/internal/wizards/source/`.
+
 ## [1.1.0] - 2026-06-22
 
 ### Added
