@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.8] - 2026-06-22
+
+### Changed
+- Formatted `imgix assets list` output to show full absolute URLs (using the Source's resolved domain/hostname) instead of relative paths.
+
 ## [1.0.7] - 2026-06-22
 
 ### Fixed

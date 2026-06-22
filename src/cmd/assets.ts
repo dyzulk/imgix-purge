@@ -38,12 +38,17 @@ export async function runAssetsList(options: { cursor?: string }) {
     
     ui.intro(`Assets for Source: ${src.name}`);
     
+    const domain = src.domains[0];
     const lines = assets.map((asset) => {
       let originPath = asset.attributes?.origin_path || '';
       if (!originPath && asset.id.includes('/')) {
         originPath = asset.id.substring(asset.id.indexOf('/') + 1);
       }
-      return `${pc.cyan(originPath)}`;
+      const cleanPath = originPath.startsWith('/') ? originPath : `/${originPath}`;
+      if (domain) {
+        return `https://${domain}${cleanPath}`;
+      }
+      return `${pc.cyan(cleanPath)}`;
     });
     
     ui.note(lines.join('\n'), 'Assets (Page Limit: 50)');
