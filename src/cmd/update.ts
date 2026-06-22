@@ -14,18 +14,50 @@ export function getInstallationSource(): 'npm' | 'yarn' | 'pnpm' | 'git-clone' |
     return 'git-clone';
   }
 
-  if (normalizedPath.includes('/pnpm/global/') || normalizedPath.includes('/.local/share/pnpm/')) {
+  // 1. Check NPM root dynamically
+  try {
+    const npmRoot = execSync('npm root -g', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim().replace(/\\/g, '/');
+    if (npmRoot && normalizedPath.toLowerCase().includes(npmRoot.toLowerCase())) {
+      return 'npm';
+    }
+  } catch (e) {
+    // Ignore error
+  }
+
+  // 2. Check PNPM root dynamically
+  try {
+    const pnpmRoot = execSync('pnpm root -g', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim().replace(/\\/g, '/');
+    if (pnpmRoot && normalizedPath.toLowerCase().includes(pnpmRoot.toLowerCase())) {
+      return 'pnpm';
+    }
+  } catch (e) {
+    // Ignore error
+  }
+
+  // 3. Check Yarn root dynamically
+  try {
+    const yarnRoot = execSync('yarn global dir', { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim().replace(/\\/g, '/');
+    if (yarnRoot && normalizedPath.toLowerCase().includes(yarnRoot.toLowerCase())) {
+      return 'yarn';
+    }
+  } catch (e) {
+    // Ignore error
+  }
+
+  // 4. Static fallbacks in case dynamic check fails or command is not found
+  const lowerPath = normalizedPath.toLowerCase();
+  if (lowerPath.includes('/pnpm/global/') || lowerPath.includes('/.local/share/pnpm/')) {
     return 'pnpm';
   }
 
-  if (normalizedPath.includes('/Yarn/Data/global/') || normalizedPath.includes('/.config/yarn/global/')) {
+  if (lowerPath.includes('/yarn/data/global/') || lowerPath.includes('/.config/yarn/global/')) {
     return 'yarn';
   }
 
   if (
-    normalizedPath.includes('/AppData/Roaming/npm/') || 
-    normalizedPath.includes('/usr/local/lib/node_modules/') ||
-    normalizedPath.includes('/.npm-global/')
+    lowerPath.includes('/appdata/roaming/npm/') || 
+    lowerPath.includes('/usr/local/lib/node_modules/') ||
+    lowerPath.includes('/.npm-global/')
   ) {
     return 'npm';
   }

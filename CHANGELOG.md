@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.5] - 2026-06-22
+
+### Changed
+- Improved package manager detection to dynamically resolve global roots (npm, yarn, pnpm) on Windows and Unix systems. This ensures universal compatibility across all node version managers (nvm, nvm-windows, fnm, volta, asdf) and custom system configs.
+- Made package manager path checking case-insensitive to fix path resolution issues on Windows.
+
 ## [1.0.4] - 2026-06-22
 
 ### Added
