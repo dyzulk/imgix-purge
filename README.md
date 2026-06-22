@@ -25,6 +25,7 @@ A fast, modular, and professional CLI companion tool to manage, purge, and diagn
 - **URL Optimizer**: Analyze URL search parameters and receive automatic optimization recommendations.
 - **CDN Cache Diagnostics**: Verify CDN cache status (Fastly/Cloudflare), headers, server compression, and get tuning suggestions.
 - **Billing & Usage Reports**: Access daily credit consumption and bandwidth usage statistics.
+- **CLI Updates**: Easily check for updates and update the CLI directly from the terminal (supports automatic package manager detection).
 
 ---
 
@@ -221,6 +222,18 @@ Display recent usage details for your imgix subscription.
 
 #### Troubleshooting:
 * **HTTP 403 Forbidden**: If this command fails with a 403 error, verify that your API Key is configured with the `Billing` read scope in your imgix dashboard.
+
+</details>
+
+<details>
+<summary><b>CLI Updates (update)</b> (Click to expand)</summary>
+
+Check for updates and update the CLI to the latest version.
+
+| Subcommand / Alias | Arguments | Options / Flags | Description | Interactive Behavior | Example Usage |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `update` | None | None | Checks for updates and runs the package manager update script. | Prompts for confirmation if a newer version is available. | `imgix update` |
+| `self-update` | None | None | Alias for `update`. | Same as `update`. | `imgix self-update` |
 
 </details>
 

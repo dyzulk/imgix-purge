@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2026-06-22
+
+### Added
+- Added documentation for the new `update` and `self-update` commands in the README.md features list and command reference table.
+
 ## [1.0.3] - 2026-06-22
 
 ### Added
