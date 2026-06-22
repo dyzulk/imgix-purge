@@ -7,11 +7,11 @@ const ORIGINAL_NAME = 'imgix-cli-unofficial';
 const TARGET_NAME = `${SCOPE}/${ORIGINAL_NAME}`;
 const REGISTRY = 'https://npm.pkg.github.com/';
 
-// Mendapatkan branch aktif saat ini untuk kembali di akhir proses
+// Get the currently active branch to return to at the end of the process
 const originalBranch = execSync('git branch --show-current', { encoding: 'utf8' }).trim();
 
 try {
-  console.log('Mengambil daftar git tags...');
+  console.log('Fetching git tags...');
   const tagsText = execSync('git tag -l "v*"', { encoding: 'utf8' });
   const tags = tagsText.split('\n')
     .map(t => t.trim())
@@ -25,12 +25,12 @@ try {
       return 0;
     });
 
-  console.log(`Menemukan ${tags.length} versi di Git history.`);
+  console.log(`Found ${tags.length} versions in Git history.`);
 
   for (const tag of tags) {
     const version = tag.substring(1);
     console.log(`\n---------------------------------------`);
-    console.log(`Memeriksa versi: ${version} (${tag})`);
+    console.log(`Checking version: ${version} (${tag})`);
 
     let versionExists = false;
     try {
@@ -44,16 +44,16 @@ try {
     }
 
     if (versionExists) {
-      console.log(`Versi ${version} sudah ada di GitHub Packages. Lewati.`);
+      console.log(`Version ${version} already exists in GitHub Packages. Skipping.`);
       continue;
     }
 
-    console.log(`Versi ${version} belum ada. Memulai proses checkout dan publish...`);
+    console.log(`Version ${version} does not exist. Starting checkout and publish process...`);
 
-    // 1. Checkout ke Tag terkait
+    // 1. Checkout to the corresponding tag
     execSync(`git checkout ${tag}`, { stdio: 'inherit' });
 
-    // 2. Modifikasi package.json secara dinamis untuk scope & registry
+    // 2. Dynamically modify package.json for scope and registry configuration
     const pkgPath = path.resolve('package.json');
     const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
     
@@ -64,8 +64,8 @@ try {
 
     fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), 'utf8');
 
-    // 3. Build Proyek
-    console.log(`Membuat build untuk versi ${version}...`);
+    // 3. Build the project
+    console.log(`Building version ${version}...`);
     try {
       execSync('pnpm run build', { stdio: 'inherit' });
     } catch (e) {
@@ -73,21 +73,21 @@ try {
       execSync('npm run build', { stdio: 'inherit' });
     }
 
-    // 4. Publish ke GitHub Packages
-    console.log(`Mempublikasikan @${version} ke GitHub Packages...`);
+    // 4. Publish to GitHub Packages
+    console.log(`Publishing @${version} to GitHub Packages...`);
     execSync(`npm publish --registry=${REGISTRY}`, { stdio: 'inherit' });
 
-    // Discard perubahan package.json setelah publish sukses
+    // Discard package.json modifications after successful publication
     execSync('git checkout -- package.json', { stdio: 'inherit' });
   }
 
   console.log('\n=======================================');
-  console.log('Proses migrasi selesai dengan sukses!');
+  console.log('Migration process completed successfully!');
 
 } catch (error: any) {
-  console.error('Terjadi kesalahan saat proses migrasi:', error.message);
+  console.error('An error occurred during the migration process:', error.message);
 } finally {
-  // Kembali ke branch semula
-  console.log(`\nKembali ke branch semula: ${originalBranch}`);
+  // Return to the original branch
+  console.log(`\nReturning to the original branch: ${originalBranch}`);
   execSync(`git checkout ${originalBranch}`, { stdio: 'inherit' });
 }
