@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.4] - 2026-06-22
+
+### Added
+- Integrated automated dual-registry package publishing to both npmjs.org and GitHub Packages (under the `@dyzulk` scope) within the CI/CD release workflow.
+- Updated README.md with complete documentation for GitHub Packages installation, scoped configuration, and registry switching guidelines.
+
+### Changed
+- Refactored the `update` (self-update) command to dynamically check the installation path for the `@dyzulk` scope, automatically applying the correct package name and registry flags when checking for or performing updates.
+- Cleaned up one-off manual migration scripts (`publish-github-packages.ts`) and workflows (`publish-github-packages.yml`).
+
 ## [1.1.3] - 2026-06-22
 
 ### Changed

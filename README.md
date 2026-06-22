@@ -31,7 +31,7 @@ A fast, modular, and professional CLI companion tool to manage, purge, and diagn
 
 ## Installation
 
-### Globally (Recommended)
+### Globally from npm (Default)
 
 Install the package globally using your preferred package manager:
 
@@ -42,6 +42,64 @@ npm install -g imgix-cli-unofficial
 # or
 yarn global add imgix-cli-unofficial
 ```
+
+### Globally from GitHub Packages (Alternative)
+
+You can also install the package from the GitHub Packages registry. This is useful as an alternative or mirror. The package is published under the `@dyzulk` scope.
+
+#### Option A: Direct Command
+Use the registry flag directly in your installation command:
+
+```bash
+npm install -g @dyzulk/imgix-cli-unofficial --registry=https://npm.pkg.github.com/
+# or
+pnpm add -g @dyzulk/imgix-cli-unofficial --registry=https://npm.pkg.github.com/
+```
+
+#### Option B: Configure Scope Registry
+Configure your package manager to resolve the `@dyzulk` scope to the GitHub Packages registry:
+
+```bash
+npm config set @dyzulk:registry https://npm.pkg.github.com/
+```
+
+Then install the package:
+
+```bash
+npm install -g @dyzulk/imgix-cli-unofficial
+# or
+pnpm add -g @dyzulk/imgix-cli-unofficial
+# or
+yarn global add @dyzulk/imgix-cli-unofficial
+```
+
+### Switching Registries
+
+If you want to switch between the npm version (`imgix-cli-unofficial`) and the GitHub Packages version (`@dyzulk/imgix-cli-unofficial`), you should reinstall the package using your package manager.
+
+For example, to switch from the npm registry to the GitHub Packages registry:
+
+1. Uninstall the existing package:
+   ```bash
+   npm uninstall -g imgix-cli-unofficial
+   ```
+2. Install the new package from GitHub Packages:
+   ```bash
+   npm install -g @dyzulk/imgix-cli-unofficial --registry=https://npm.pkg.github.com/
+   ```
+
+To switch back to the npm registry:
+
+1. Uninstall the GitHub Packages package:
+   ```bash
+   npm uninstall -g @dyzulk/imgix-cli-unofficial
+   ```
+2. Install the npm package:
+   ```bash
+   npm install -g imgix-cli-unofficial
+   ```
+
+The CLI's built-in update command (`imgix update`) automatically detects the registry and package scope it was installed with, ensuring that subsequent updates check and download from the correct registry.
 
 ### In-Project Development
 

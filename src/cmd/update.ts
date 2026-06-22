@@ -116,6 +116,17 @@ export async function runSelfUpdate(currentVersion: string) {
 
   ui.log.info(`A new version is available: v${currentVersion} -> v${latestVersion}`);
 
+  let currentFilePath = fileURLToPath(import.meta.url);
+  try {
+    currentFilePath = fs.realpathSync(currentFilePath);
+  } catch (e) {
+    // Ignore error
+  }
+  const normalizedPath = currentFilePath.replace(/\\/g, '/');
+  const isGithubPackages = normalizedPath.toLowerCase().includes('@dyzulk');
+  const packageName = isGithubPackages ? '@dyzulk/imgix-cli-unofficial' : 'imgix-cli-unofficial';
+  const registryFlag = isGithubPackages ? ' --registry=https://npm.pkg.github.com/' : '';
+
   const source = getInstallationSource();
 
   if (source === 'git-clone') {
@@ -130,9 +141,9 @@ export async function runSelfUpdate(currentVersion: string) {
     ui.log.warn('Could not determine global installation package manager.');
     ui.log.info('You can update manually using one of the following commands:');
     ui.log.message(
-      `  npm install -g imgix-cli-unofficial\n` +
-      `  pnpm add -g imgix-cli-unofficial\n` +
-      `  yarn global add imgix-cli-unofficial`
+      `  npm install -g ${packageName}${registryFlag}\n` +
+      `  pnpm add -g ${packageName}${registryFlag}\n` +
+      `  yarn global add ${packageName}${registryFlag}`
     );
     ui.outro('Self-update skipped.');
     return;
@@ -149,11 +160,11 @@ export async function runSelfUpdate(currentVersion: string) {
 
   let updateCmd = '';
   if (source === 'pnpm') {
-    updateCmd = `pnpm add -g imgix-cli-unofficial@${latestVersion}`;
+    updateCmd = `pnpm add -g ${packageName}@${latestVersion}${registryFlag}`;
   } else if (source === 'yarn') {
-    updateCmd = `yarn global add imgix-cli-unofficial@${latestVersion}`;
+    updateCmd = `yarn global add ${packageName}@${latestVersion}${registryFlag}`;
   } else {
-    updateCmd = `npm install -g imgix-cli-unofficial@${latestVersion}`;
+    updateCmd = `npm install -g ${packageName}@${latestVersion}${registryFlag}`;
   }
 
   const updateSpinner = ui.spinner();
