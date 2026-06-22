@@ -4,6 +4,15 @@ import { ui } from '../internal/ui/prompts.js';
 export async function runDiagnose(urlStr?: string) {
   let targetUrl = (urlStr || '').trim();
   
+  if (targetUrl) {
+    try {
+      new URL(targetUrl);
+    } catch {
+      ui.log.error('Invalid URL. Please provide a full absolute URL including the protocol and hostname (e.g., https://my-source.imgix.net/path/to/image.png).');
+      process.exit(1);
+    }
+  }
+  
   if (!targetUrl) {
     const inputUrl = await ui.text({
       message: 'Enter target imgix image URL to diagnose:',

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.6] - 2026-06-22
+
+### Changed
+- Added pre-validation for target URLs in both `url optimize` and `diagnose` commands.
+- Improved error messages for invalid or relative URL paths to clearly explain that a full absolute URL containing the protocol and hostname is required.
+
 ## [1.0.5] - 2026-06-22
 
 ### Changed
