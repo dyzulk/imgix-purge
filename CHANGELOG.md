@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.9] - 2026-06-22
+
+### Changed
+- Configured self-update command to force install the exact latest version (e.g. `imgix-cli-unofficial@1.0.9`) to bypass npm registry cache and index propagation lag.
+
 ## [1.0.8] - 2026-06-22
 
 ### Changed

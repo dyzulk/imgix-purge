@@ -148,11 +148,11 @@ export async function runSelfUpdate(currentVersion: string) {
 
   let updateCmd = '';
   if (source === 'pnpm') {
-    updateCmd = 'pnpm add -g imgix-cli-unofficial';
+    updateCmd = `pnpm add -g imgix-cli-unofficial@${latestVersion}`;
   } else if (source === 'yarn') {
-    updateCmd = 'yarn global add imgix-cli-unofficial';
+    updateCmd = `yarn global add imgix-cli-unofficial@${latestVersion}`;
   } else {
-    updateCmd = 'npm install -g imgix-cli-unofficial';
+    updateCmd = `npm install -g imgix-cli-unofficial@${latestVersion}`;
   }
 
   const updateSpinner = ui.spinner();
